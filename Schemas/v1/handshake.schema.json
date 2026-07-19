@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astrolabe.dev/schemas/v1/handshake.schema.json",
+  "title": "Astrolabe V1 Handshake",
+  "oneOf": [
+    { "$ref": "#/$defs/request" },
+    { "$ref": "#/$defs/response" }
+  ],
+  "$defs": {
+    "version": {
+      "type": "object",
+      "required": ["major", "minor"],
+      "properties": {
+        "major": { "type": "integer", "minimum": 0, "maximum": 65535 },
+        "minor": { "type": "integer", "minimum": 0, "maximum": 65535 }
+      }
+    },
+    "range": {
+      "type": "object",
+      "required": ["minimum", "maximum"],
+      "properties": {
+        "minimum": { "$ref": "#/$defs/version" },
+        "maximum": { "$ref": "#/$defs/version" }
+      }
+    },
+    "request": {
+      "type": "object",
+      "required": ["requestID", "protocolVersion", "method", "parameters"],
+      "properties": {
+        "requestID": { "type": "string", "format": "uuid" },
+        "protocolVersion": { "$ref": "#/$defs/version" },
+        "method": { "const": "handshake" },
+        "parameters": {
+          "type": "object",
+          "required": ["clientName", "clientVersion", "supportedProtocolRange"],
+          "properties": {
+            "clientName": { "type": "string", "minLength": 1 },
+            "clientVersion": { "type": "string", "minLength": 1 },
+            "supportedProtocolRange": { "$ref": "#/$defs/range" }
+          }
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "required": ["requestID", "protocolVersion", "status", "payload"],
+      "properties": {
+        "requestID": { "type": "string", "format": "uuid" },
+        "protocolVersion": { "$ref": "#/$defs/version" },
+        "status": { "const": "success" },
+        "payload": {
+          "type": "object",
+          "required": ["runtimeVersion", "negotiatedProtocolVersion", "platform", "processIdentifier", "capabilities"],
+          "properties": {
+            "runtimeVersion": { "type": "string", "minLength": 1 },
+            "negotiatedProtocolVersion": { "$ref": "#/$defs/version" },
+            "platform": { "type": "string", "minLength": 1 },
+            "processIdentifier": { "type": "integer" },
+            "capabilities": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true
+            }
+          }
+        }
+      }
+    }
+  }
+}

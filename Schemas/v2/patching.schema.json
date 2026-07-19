@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astrolabe.dev/schemas/v2/patching.schema.json",
+  "title": "Astrolabe Protocol 2.0 Temporary Attribute Patching",
+  "$defs": {
+    "valueTypeIdentifier": {
+      "oneOf": [
+        {
+          "enum": [
+            "null",
+            "boolean",
+            "integer",
+            "number",
+            "string",
+            "stringList",
+            "measurement",
+            "point",
+            "size",
+            "vector",
+            "rect",
+            "insets",
+            "color",
+            "textRuns",
+            "layoutRelations",
+            "array",
+            "object"
+          ]
+        },
+        {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/namespacedIdentifier"
+        }
+      ]
+    },
+    "patchValueConstraints": {
+      "type": "object",
+      "required": ["minimum", "maximum", "minimumExclusive", "maximumExclusive", "acceptedFormats", "allowedValues"],
+      "properties": {
+        "minimum": { "type": ["number", "null"] },
+        "maximum": { "type": ["number", "null"] },
+        "minimumExclusive": { "type": "boolean" },
+        "maximumExclusive": { "type": "boolean" },
+        "acceptedFormats": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "allowedValues": {
+          "type": "array",
+          "items": {
+            "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/attributeValue"
+          }
+        }
+      }
+    },
+    "patchableAttribute": {
+      "type": "object",
+      "required": ["attributePattern", "valueType", "targetRoles", "valueConstraints", "extensions"],
+      "properties": {
+        "attributePattern": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*(\\.(?:[A-Za-z][A-Za-z0-9_-]*|<[A-Za-z][A-Za-z0-9_-]*>))+$",
+          "maxLength": 256
+        },
+        "valueType": { "$ref": "#/$defs/valueTypeIdentifier" },
+        "targetRoles": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "uniqueItems": true
+        },
+        "valueConstraints": {
+          "oneOf": [
+            { "$ref": "#/$defs/patchValueConstraints" },
+            { "type": "null" }
+          ]
+        },
+        "extensions": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/extensionMap"
+        }
+      }
+    },
+    "patchableAttributesPayload": {
+      "type": "object",
+      "required": ["attributes"],
+      "properties": {
+        "attributes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/patchableAttribute" }
+        }
+      }
+    },
+    "applyAttributePatchParameters": {
+      "type": "object",
+      "required": ["nodeID", "attributeIdentifier", "value"],
+      "properties": {
+        "nodeID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        },
+        "attributeIdentifier": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/namespacedIdentifier"
+        },
+        "value": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/attributeValue"
+        }
+      }
+    },
+    "attributePatch": {
+      "type": "object",
+      "required": ["patchID", "nodeID", "attributeIdentifier", "originalValue", "requestedValue", "actualValue", "appliedAtUnixTime"],
+      "properties": {
+        "patchID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        },
+        "nodeID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        },
+        "attributeIdentifier": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/namespacedIdentifier"
+        },
+        "originalValue": {
+          "oneOf": [
+            { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/attributeValue" },
+            { "type": "null" }
+          ]
+        },
+        "requestedValue": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/attributeValue"
+        },
+        "actualValue": {
+          "oneOf": [
+            { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/attributeValue" },
+            { "type": "null" }
+          ]
+        },
+        "appliedAtUnixTime": { "type": "number", "minimum": 0 }
+      }
+    },
+    "attributePatchListPayload": {
+      "type": "object",
+      "required": ["patches"],
+      "properties": {
+        "patches": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/attributePatch" }
+        }
+      }
+    },
+    "revertAttributePatchParameters": {
+      "type": "object",
+      "required": ["patchID"],
+      "properties": {
+        "patchID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        }
+      }
+    },
+    "revertAttributePatchPayload": {
+      "type": "object",
+      "required": ["revertedPatchID", "restoredValue", "remainingPatchCount"],
+      "properties": {
+        "revertedPatchID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        },
+        "restoredValue": {
+          "oneOf": [
+            { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/attributeValue" },
+            { "type": "null" }
+          ]
+        },
+        "remainingPatchCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "clearAttributePatchesPayload": {
+      "type": "object",
+      "required": ["revertedPatchIDs", "remainingPatchCount"],
+      "properties": {
+        "revertedPatchIDs": {
+          "type": "array",
+          "items": {
+            "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+          },
+          "uniqueItems": true
+        },
+        "remainingPatchCount": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

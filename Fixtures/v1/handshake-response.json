@@ -1,0 +1,12 @@
+{
+  "requestID": "00000000-0000-0000-0000-000000000001",
+  "protocolVersion": { "major": 1, "minor": 0 },
+  "status": "success",
+  "payload": {
+    "runtimeVersion": "0.1.0",
+    "negotiatedProtocolVersion": { "major": 1, "minor": 0 },
+    "platform": "iOS",
+    "processIdentifier": 42,
+    "capabilities": ["appInfo", "hierarchySnapshot", "nodeDetail", "requestCancellation"]
+  }
+}

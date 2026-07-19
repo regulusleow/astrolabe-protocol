@@ -1,0 +1,6 @@
+{
+  "requestID": "00000000-0000-4000-8000-000000000005",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "patchableAttributes",
+  "parameters": {}
+}

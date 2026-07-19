@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astrolabe.dev/schemas/v2/conformance-manifest.schema.json",
+  "title": "Astrolabe Protocol 2.0 Conformance Manifest",
+  "type": "object",
+  "required": ["schemaVersion", "wireProtocolVersion", "methods", "cases"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "wireProtocolVersion": {
+      "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/protocolVersion"
+    },
+    "methods": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "capability", "requestSchema", "successResponseSchema", "failureResponseSchema"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "capability": { "type": ["string", "null"] },
+          "requestSchema": { "type": "string", "format": "uri-reference" },
+          "successResponseSchema": { "type": "string", "format": "uri-reference" },
+          "failureResponseSchema": { "type": "string", "format": "uri-reference" }
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "fixture", "schema", "expectation"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "fixture": { "type": "string", "pattern": "^Fixtures/v2/(valid|invalid)/.+\\.json$" },
+          "schema": { "type": "string", "format": "uri-reference" },
+          "expectation": { "enum": ["valid", "invalid"] },
+          "semanticRule": { "enum": ["ascendingProtocolRange", "derivedVisibility"] },
+          "reason": { "type": "string", "minLength": 1 }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": { "expectation": { "const": "invalid" } },
+              "required": ["expectation"]
+            },
+            "then": {
+              "type": "object",
+              "required": ["reason"],
+              "properties": {
+                "reason": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

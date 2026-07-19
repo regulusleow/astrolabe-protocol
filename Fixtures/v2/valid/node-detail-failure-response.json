@@ -1,0 +1,12 @@
+{
+  "requestID": "00000000-0000-4000-8000-000000000014",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "nodeDetail",
+  "status": "failure",
+  "error": {
+    "code": "nodeNotFound",
+    "message": "The requested node no longer exists.",
+    "recoverySuggestion": "Capture a new hierarchy snapshot.",
+    "details": { "nodeID": "node:expired:1" }
+  }
+}

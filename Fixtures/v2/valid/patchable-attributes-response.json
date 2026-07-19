@@ -1,0 +1,26 @@
+{
+  "requestID": "00000000-0000-4000-8000-000000000005",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "patchableAttributes",
+  "status": "success",
+  "payload": {
+    "attributes": [
+      {
+        "attributePattern": "common.text.fontSize",
+        "valueType": "measurement",
+        "targetRoles": ["text", "button", "input"],
+        "valueConstraints": {
+          "minimum": 0,
+          "maximum": null,
+          "minimumExclusive": true,
+          "maximumExclusive": false,
+          "acceptedFormats": [],
+          "allowedValues": []
+        },
+        "extensions": {
+          "ios.uikit.supportedRuntimeTypes": ["UILabel", "UIButton"]
+        }
+      }
+    ]
+  }
+}

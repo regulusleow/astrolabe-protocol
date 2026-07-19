@@ -1,0 +1,11 @@
+{
+  "requestID": "00000000-0000-4000-8000-000000000008",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "revertAttributePatch",
+  "status": "success",
+  "payload": {
+    "revertedPatchID": "patch:font-size:1",
+    "restoredValue": { "type": "measurement", "value": { "value": 14, "unit": "scaledLogical" } },
+    "remainingPatchCount": 0
+  }
+}

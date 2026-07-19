@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astrolabe.dev/schemas/v2/response.schema.json",
+  "title": "Astrolabe Protocol 2.0 Responses",
+  "oneOf": [
+    { "$ref": "#/$defs/handshakeSuccessResponse" },
+    { "$ref": "#/$defs/applicationInfoSuccessResponse" },
+    { "$ref": "#/$defs/hierarchySnapshotSuccessResponse" },
+    { "$ref": "#/$defs/nodeDetailSuccessResponse" },
+    { "$ref": "#/$defs/patchableAttributesSuccessResponse" },
+    { "$ref": "#/$defs/applyAttributePatchSuccessResponse" },
+    { "$ref": "#/$defs/listAttributePatchesSuccessResponse" },
+    { "$ref": "#/$defs/revertAttributePatchSuccessResponse" },
+    { "$ref": "#/$defs/clearAttributePatchesSuccessResponse" },
+    { "$ref": "#/$defs/cancelRequestSuccessResponse" },
+    { "$ref": "#/$defs/handshakeFailureResponse" },
+    { "$ref": "#/$defs/applicationInfoFailureResponse" },
+    { "$ref": "#/$defs/hierarchySnapshotFailureResponse" },
+    { "$ref": "#/$defs/nodeDetailFailureResponse" },
+    { "$ref": "#/$defs/patchableAttributesFailureResponse" },
+    { "$ref": "#/$defs/applyAttributePatchFailureResponse" },
+    { "$ref": "#/$defs/listAttributePatchesFailureResponse" },
+    { "$ref": "#/$defs/revertAttributePatchFailureResponse" },
+    { "$ref": "#/$defs/clearAttributePatchesFailureResponse" },
+    { "$ref": "#/$defs/cancelRequestFailureResponse" },
+    { "$ref": "#/$defs/unknownMethodFailureResponse" }
+  ],
+  "$defs": {
+    "successEnvelope": {
+      "allOf": [
+        { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/responseEnvelope" },
+        {
+          "type": "object",
+          "required": ["payload"],
+          "properties": {
+            "status": { "const": "success" },
+            "payload": {},
+            "error": false
+          }
+        }
+      ]
+    },
+    "failureEnvelope": {
+      "allOf": [
+        { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/responseEnvelope" },
+        {
+          "type": "object",
+          "required": ["error"],
+          "properties": {
+            "status": { "const": "failure" },
+            "payload": false,
+            "error": { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/error" }
+          }
+        }
+      ]
+    },
+    "handshakeSuccessResponse": {
+      "allOf": [
+        { "$ref": "#/$defs/successEnvelope" },
+        { "type": "object", "properties": { "method": { "const": "handshake" }, "payload": { "$ref": "https://astrolabe.dev/schemas/v2/session.schema.json#/$defs/handshakePayload" } } }
+      ]
+    },
+    "applicationInfoSuccessResponse": {
+      "allOf": [
+        { "$ref": "#/$defs/successEnvelope" },
+        { "type": "object", "properties": { "method": { "const": "applicationInfo" }, "payload": { "$ref": "https://astrolabe.dev/schemas/v2/inspection.schema.json#/$defs/applicationInfoPayload" } } }
+      ]
+    },
+    "hierarchySnapshotSuccessResponse": {
+      "allOf": [
+        { "$ref": "#/$defs/successEnvelope" },
+        { "type": "object", "properties": { "method": { "const": "hierarchySnapshot" }, "payload": { "$ref": "https://astrolabe.dev/schemas/v2/inspection.schema.json#/$defs/hierarchySnapshotPayload" } } }
+      ]
+    },
+    "nodeDetailSuccessResponse": {
+      "allOf": [
+        { "$ref": "#/$defs/successEnvelope" },
+        { "type": "object", "properties": { "method": { "const": "nodeDetail" }, "payload": { "$ref": "https://astrolabe.dev/schemas/v2/inspection.schema.json#/$defs/nodeDetailPayload" } } }
+      ]
+    },
+    "patchableAttributesSuccessResponse": {
+      "allOf": [
+        { "$ref": "#/$defs/successEnvelope" },
+        { "type": "object", "properties": { "method": { "const": "patchableAttributes" }, "payload": { "$ref": "https://astrolabe.dev/schemas/v2/patching.schema.json#/$defs/patchableAttributesPayload" } } }
+      ]
+    },
+    "applyAttributePatchSuccessResponse": {
+      "allOf": [
+        { "$ref": "#/$defs/successEnvelope" },
+        { "type": "object", "properties": { "method": { "const": "applyAttributePatch" }, "payload": { "$ref": "https://astrolabe.dev/schemas/v2/patching.schema.json#/$defs/attributePatch" } } }
+      ]
+    },
+    "listAttributePatchesSuccessResponse": {
+      "allOf": [
+        { "$ref": "#/$defs/successEnvelope" },
+        { "type": "object", "properties": { "method": { "const": "listAttributePatches" }, "payload": { "$ref": "https://astrolabe.dev/schemas/v2/patching.schema.json#/$defs/attributePatchListPayload" } } }
+      ]
+    },
+    "revertAttributePatchSuccessResponse": {
+      "allOf": [
+        { "$ref": "#/$defs/successEnvelope" },
+        { "type": "object", "properties": { "method": { "const": "revertAttributePatch" }, "payload": { "$ref": "https://astrolabe.dev/schemas/v2/patching.schema.json#/$defs/revertAttributePatchPayload" } } }
+      ]
+    },
+    "clearAttributePatchesSuccessResponse": {
+      "allOf": [
+        { "$ref": "#/$defs/successEnvelope" },
+        { "type": "object", "properties": { "method": { "const": "clearAttributePatches" }, "payload": { "$ref": "https://astrolabe.dev/schemas/v2/patching.schema.json#/$defs/clearAttributePatchesPayload" } } }
+      ]
+    },
+    "cancelRequestSuccessResponse": {
+      "allOf": [
+        { "$ref": "#/$defs/successEnvelope" },
+        { "type": "object", "properties": { "method": { "const": "cancelRequest" }, "payload": { "$ref": "https://astrolabe.dev/schemas/v2/session.schema.json#/$defs/cancelRequestPayload" } } }
+      ]
+    },
+    "handshakeFailureResponse": {
+      "allOf": [{ "$ref": "#/$defs/failureEnvelope" }, { "type": "object", "properties": { "method": { "const": "handshake" } } }]
+    },
+    "applicationInfoFailureResponse": {
+      "allOf": [{ "$ref": "#/$defs/failureEnvelope" }, { "type": "object", "properties": { "method": { "const": "applicationInfo" } } }]
+    },
+    "hierarchySnapshotFailureResponse": {
+      "allOf": [{ "$ref": "#/$defs/failureEnvelope" }, { "type": "object", "properties": { "method": { "const": "hierarchySnapshot" } } }]
+    },
+    "nodeDetailFailureResponse": {
+      "allOf": [{ "$ref": "#/$defs/failureEnvelope" }, { "type": "object", "properties": { "method": { "const": "nodeDetail" } } }]
+    },
+    "patchableAttributesFailureResponse": {
+      "allOf": [{ "$ref": "#/$defs/failureEnvelope" }, { "type": "object", "properties": { "method": { "const": "patchableAttributes" } } }]
+    },
+    "applyAttributePatchFailureResponse": {
+      "allOf": [{ "$ref": "#/$defs/failureEnvelope" }, { "type": "object", "properties": { "method": { "const": "applyAttributePatch" } } }]
+    },
+    "listAttributePatchesFailureResponse": {
+      "allOf": [{ "$ref": "#/$defs/failureEnvelope" }, { "type": "object", "properties": { "method": { "const": "listAttributePatches" } } }]
+    },
+    "revertAttributePatchFailureResponse": {
+      "allOf": [{ "$ref": "#/$defs/failureEnvelope" }, { "type": "object", "properties": { "method": { "const": "revertAttributePatch" } } }]
+    },
+    "clearAttributePatchesFailureResponse": {
+      "allOf": [{ "$ref": "#/$defs/failureEnvelope" }, { "type": "object", "properties": { "method": { "const": "clearAttributePatches" } } }]
+    },
+    "cancelRequestFailureResponse": {
+      "allOf": [{ "$ref": "#/$defs/failureEnvelope" }, { "type": "object", "properties": { "method": { "const": "cancelRequest" } } }]
+    },
+    "unknownMethodFailureResponse": {
+      "allOf": [
+        { "$ref": "#/$defs/failureEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "method": {
+              "not": {
+                "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/knownMethod"
+              }
+            },
+            "error": {
+              "type": "object",
+              "properties": {
+                "code": { "const": "unsupportedMethod" }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

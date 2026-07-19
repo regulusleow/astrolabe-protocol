@@ -1,0 +1,15 @@
+{
+  "requestID": "10000000-0000-4000-8000-000000000003",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "cancelRequest",
+  "status": "success",
+  "payload": {
+    "targetRequestID": "00000000-0000-4000-8000-000000000003",
+    "cancellationAccepted": true
+  },
+  "error": {
+    "code": "internalFailure",
+    "message": "Conflicting outcome.",
+    "recoverySuggestion": null
+  }
+}

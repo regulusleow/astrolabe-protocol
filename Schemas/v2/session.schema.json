@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astrolabe.dev/schemas/v2/session.schema.json",
+  "title": "Astrolabe Protocol 2.0 Session Types",
+  "$defs": {
+    "handshakeParameters": {
+      "type": "object",
+      "required": ["client", "supportedProtocolRange"],
+      "properties": {
+        "client": {
+          "type": "object",
+          "required": ["name", "version"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+            "version": { "type": "string", "minLength": 1, "maxLength": 64 }
+          }
+        },
+        "supportedProtocolRange": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/protocolRange"
+        }
+      }
+    },
+    "runtimeDescriptor": {
+      "type": "object",
+      "required": ["identifier", "version", "instanceID"],
+      "properties": {
+        "identifier": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/namespacedIdentifier"
+        },
+        "version": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "instanceID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        }
+      }
+    },
+    "handshakePayload": {
+      "type": "object",
+      "required": ["runtime", "platform", "negotiatedProtocolVersion", "capabilities"],
+      "properties": {
+        "runtime": { "$ref": "#/$defs/runtimeDescriptor" },
+        "platform": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "negotiatedProtocolVersion": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/protocolVersion"
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/capability"
+          },
+          "uniqueItems": true
+        },
+        "extensions": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/extensionMap"
+        }
+      }
+    },
+    "cancelRequestParameters": {
+      "type": "object",
+      "required": ["targetRequestID"],
+      "properties": {
+        "targetRequestID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/uuid"
+        }
+      }
+    },
+    "cancelRequestPayload": {
+      "type": "object",
+      "required": ["targetRequestID", "cancellationAccepted"],
+      "properties": {
+        "targetRequestID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/uuid"
+        },
+        "cancellationAccepted": { "type": "boolean" }
+      }
+    }
+  }
+}

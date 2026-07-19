@@ -1,0 +1,10 @@
+{
+  "requestID": "00000000-0000-4000-8000-000000000009",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "clearAttributePatches",
+  "status": "success",
+  "payload": {
+    "revertedPatchIDs": ["patch:font-size:1"],
+    "remainingPatchCount": 0
+  }
+}

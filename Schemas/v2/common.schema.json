@@ -1,0 +1,468 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astrolabe.dev/schemas/v2/common.schema.json",
+  "title": "Astrolabe Protocol 2.0 Common Types",
+  "$defs": {
+    "protocolVersion": {
+      "type": "object",
+      "required": ["major", "minor"],
+      "properties": {
+        "major": { "const": 2 },
+        "minor": { "const": 0 }
+      }
+    },
+    "versionValue": {
+      "type": "object",
+      "required": ["major", "minor"],
+      "properties": {
+        "major": { "type": "integer", "minimum": 0, "maximum": 65535 },
+        "minor": { "type": "integer", "minimum": 0, "maximum": 65535 }
+      }
+    },
+    "protocolRange": {
+      "type": "object",
+      "required": ["minimum", "maximum"],
+      "properties": {
+        "minimum": { "$ref": "#/$defs/versionValue" },
+        "maximum": { "$ref": "#/$defs/versionValue" }
+      }
+    },
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "opaqueIdentifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "namespacedIdentifier": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*(\\.[A-Za-z][A-Za-z0-9_-]*)+$",
+      "maxLength": 256
+    },
+    "method": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "knownMethod": {
+      "enum": [
+        "handshake",
+        "applicationInfo",
+        "hierarchySnapshot",
+        "nodeDetail",
+        "patchableAttributes",
+        "applyAttributePatch",
+        "listAttributePatches",
+        "revertAttributePatch",
+        "clearAttributePatches",
+        "cancelRequest"
+      ]
+    },
+    "capability": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "emptyObject": {
+      "type": "object",
+      "maxProperties": 0
+    },
+    "extensionMap": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/namespacedIdentifier" }
+    },
+    "safeInteger": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "measurementUnit": {
+      "enum": ["logical", "scaledLogical", "pixel"]
+    },
+    "measurement": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "properties": {
+        "value": { "type": "number" },
+        "unit": { "$ref": "#/$defs/measurementUnit" }
+      }
+    },
+    "coordinatePoint": {
+      "type": "object",
+      "required": ["x", "y", "coordinateSpace", "unit"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "coordinateSpace": { "enum": ["local", "parent", "screen", "viewport"] },
+        "unit": { "enum": ["logical", "pixel"] }
+      }
+    },
+    "size": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "number", "minimum": 0 },
+        "height": { "type": "number", "minimum": 0 }
+      }
+    },
+    "measuredSize": {
+      "type": "object",
+      "required": ["width", "height", "unit"],
+      "properties": {
+        "width": { "type": "number", "minimum": 0 },
+        "height": { "type": "number", "minimum": 0 },
+        "unit": { "enum": ["logical", "pixel"] }
+      }
+    },
+    "vector": {
+      "type": "object",
+      "required": ["dx", "dy", "unit"],
+      "properties": {
+        "dx": { "type": "number" },
+        "dy": { "type": "number" },
+        "unit": { "enum": ["logical", "pixel"] }
+      }
+    },
+    "insets": {
+      "type": "object",
+      "required": ["top", "left", "bottom", "right", "unit"],
+      "properties": {
+        "top": { "type": "number" },
+        "left": { "type": "number" },
+        "bottom": { "type": "number" },
+        "right": { "type": "number" },
+        "unit": { "enum": ["logical", "pixel"] }
+      }
+    },
+    "coordinateRect": {
+      "type": "object",
+      "required": ["x", "y", "width", "height", "coordinateSpace", "unit"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "width": { "type": "number", "minimum": 0 },
+        "height": { "type": "number", "minimum": 0 },
+        "coordinateSpace": { "enum": ["local", "parent", "screen", "viewport"] },
+        "unit": { "enum": ["logical", "pixel"] }
+      }
+    },
+    "color": {
+      "type": "object",
+      "required": ["colorSpace", "red", "green", "blue", "alpha"],
+      "properties": {
+        "colorSpace": { "type": "string", "minLength": 1 },
+        "red": { "type": "number", "minimum": 0, "maximum": 1 },
+        "green": { "type": "number", "minimum": 0, "maximum": 1 },
+        "blue": { "type": "number", "minimum": 0, "maximum": 1 },
+        "alpha": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "displayInfo": {
+      "type": "object",
+      "required": ["logicalSize", "pixelSize", "logicalToPixelScale", "maximumRefreshRate"],
+      "properties": {
+        "logicalSize": {
+          "allOf": [
+            { "$ref": "#/$defs/measuredSize" },
+            { "type": "object", "properties": { "unit": { "const": "logical" } } }
+          ]
+        },
+        "pixelSize": {
+          "allOf": [
+            { "$ref": "#/$defs/measuredSize" },
+            { "type": "object", "properties": { "unit": { "const": "pixel" } } }
+          ]
+        },
+        "logicalToPixelScale": {
+          "type": "object",
+          "required": ["x", "y"],
+          "properties": {
+            "x": { "type": "number", "exclusiveMinimum": 0 },
+            "y": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        },
+        "maximumRefreshRate": {
+          "type": ["number", "null"],
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "textRange": {
+      "type": "object",
+      "required": ["location", "length"],
+      "properties": {
+        "location": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+        "length": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 }
+      }
+    },
+    "textRun": {
+      "type": "object",
+      "required": ["range", "text", "fontName", "fontFamilyName", "fontSize", "color", "extensions"],
+      "properties": {
+        "range": { "$ref": "#/$defs/textRange" },
+        "text": { "type": "string" },
+        "fontName": { "type": ["string", "null"] },
+        "fontFamilyName": { "type": ["string", "null"] },
+        "fontSize": {
+          "oneOf": [
+            { "$ref": "#/$defs/measurement" },
+            { "type": "null" }
+          ]
+        },
+        "color": {
+          "oneOf": [
+            { "$ref": "#/$defs/color" },
+            { "type": "null" }
+          ]
+        },
+        "extensions": { "$ref": "#/$defs/extensionMap" }
+      }
+    },
+    "layoutAnchor": {
+      "type": "object",
+      "required": ["nodeID", "anchor"],
+      "properties": {
+        "nodeID": { "$ref": "#/$defs/opaqueIdentifier" },
+        "anchor": { "type": "string", "minLength": 1, "maxLength": 128 }
+      }
+    },
+    "layoutRelation": {
+      "type": "object",
+      "required": ["identifier", "source", "relation", "target", "multiplier", "offset", "strength", "active", "extensions"],
+      "properties": {
+        "identifier": { "type": ["string", "null"] },
+        "source": { "$ref": "#/$defs/layoutAnchor" },
+        "relation": { "enum": ["lessThanOrEqual", "equal", "greaterThanOrEqual"] },
+        "target": {
+          "oneOf": [
+            { "$ref": "#/$defs/layoutAnchor" },
+            { "type": "null" }
+          ]
+        },
+        "multiplier": { "type": "number" },
+        "offset": {
+          "allOf": [
+            { "$ref": "#/$defs/measurement" },
+            { "type": "object", "properties": { "unit": { "const": "logical" } } }
+          ]
+        },
+        "strength": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "active": { "type": ["boolean", "null"] },
+        "extensions": { "$ref": "#/$defs/extensionMap" }
+      }
+    },
+    "attributeValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "null" },
+            "value": { "type": "null" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "boolean" },
+            "value": { "type": "boolean" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "integer" },
+            "value": { "$ref": "#/$defs/safeInteger" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "number" },
+            "value": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "string" },
+            "value": { "type": "string" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "stringList" },
+            "value": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "measurement" },
+            "value": { "$ref": "#/$defs/measurement" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "point" },
+            "value": { "$ref": "#/$defs/coordinatePoint" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "size" },
+            "value": { "$ref": "#/$defs/measuredSize" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "vector" },
+            "value": { "$ref": "#/$defs/vector" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "rect" },
+            "value": { "$ref": "#/$defs/coordinateRect" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "insets" },
+            "value": { "$ref": "#/$defs/insets" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "color" },
+            "value": { "$ref": "#/$defs/color" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "textRuns" },
+            "value": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/textRun" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "layoutRelations" },
+            "value": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/layoutRelation" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "array" },
+            "value": { "type": "array" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "const": "object" },
+            "value": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "value"],
+          "properties": {
+            "type": { "$ref": "#/$defs/namespacedIdentifier" }
+          }
+        }
+      ]
+    },
+    "errorCode": {
+      "oneOf": [
+        {
+          "enum": [
+            "malformedFrame",
+            "frameTooLarge",
+            "malformedMessage",
+            "unsupportedProtocolVersion",
+            "unsupportedMethod",
+            "handshakeRequired",
+            "capabilityUnavailable",
+            "invalidParameters",
+            "nodeNotFound",
+            "unsupportedAttribute",
+            "invalidAttributeValue",
+            "patchNotFound",
+            "patchConflict",
+            "patchRestorationFailed",
+            "tooManyRequests",
+            "requestCancelled",
+            "requestTimedOut",
+            "internalFailure"
+          ]
+        },
+        { "$ref": "#/$defs/namespacedIdentifier" }
+      ]
+    },
+    "error": {
+      "type": "object",
+      "required": ["code", "message", "recoverySuggestion"],
+      "properties": {
+        "code": { "$ref": "#/$defs/errorCode" },
+        "message": { "type": "string", "minLength": 1 },
+        "recoverySuggestion": { "type": ["string", "null"] },
+        "details": { "type": "object" },
+        "extensions": { "$ref": "#/$defs/extensionMap" }
+      }
+    },
+    "requestEnvelope": {
+      "type": "object",
+      "required": ["requestID", "protocolVersion", "method", "parameters"],
+      "properties": {
+        "requestID": { "$ref": "#/$defs/uuid" },
+        "protocolVersion": { "$ref": "#/$defs/protocolVersion" },
+        "method": { "$ref": "#/$defs/method" },
+        "parameters": { "type": "object" }
+      }
+    },
+    "responseEnvelope": {
+      "type": "object",
+      "required": ["requestID", "protocolVersion", "method", "status"],
+      "properties": {
+        "requestID": { "$ref": "#/$defs/uuid" },
+        "protocolVersion": { "$ref": "#/$defs/protocolVersion" },
+        "method": { "$ref": "#/$defs/method" },
+        "status": { "enum": ["success", "failure"] }
+      }
+    }
+  }
+}

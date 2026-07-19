@@ -1,0 +1,24 @@
+{
+  "requestID": "00000000-0000-4000-8000-000000000001",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "handshake",
+  "status": "success",
+  "payload": {
+    "runtime": {
+      "identifier": "astrolabe.runtime.ios",
+      "version": "2.0.0",
+      "instanceID": "runtime:demo:4242"
+    },
+    "platform": "ios",
+    "negotiatedProtocolVersion": { "major": 2, "minor": 0 },
+    "capabilities": [
+      "applicationInfo",
+      "hierarchySnapshot",
+      "nodeDetail",
+      "attributePatchDiscovery",
+      "attributePatching",
+      "requestCancellation",
+      "vendor.experimentalInspection"
+    ]
+  }
+}

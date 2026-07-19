@@ -1,0 +1,10 @@
+{
+  "requestID": "00000000-0000-4000-8000-000000000006",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "applyAttributePatch",
+  "parameters": {
+    "nodeID": "node:label:1",
+    "attributeIdentifier": "common.text.fontSize",
+    "value": { "type": "measurement", "value": { "value": 16, "unit": "scaledLogical" } }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "requestID": "00000000-0000-4000-8000-000000000007",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "listAttributePatches",
+  "status": "success",
+  "payload": {
+    "patches": [
+      {
+        "patchID": "patch:font-size:1",
+        "nodeID": "node:label:1",
+        "attributeIdentifier": "common.text.fontSize",
+        "originalValue": { "type": "measurement", "value": { "value": 14, "unit": "scaledLogical" } },
+        "requestedValue": { "type": "measurement", "value": { "value": 16, "unit": "scaledLogical" } },
+        "actualValue": { "type": "measurement", "value": { "value": 16, "unit": "scaledLogical" } },
+        "appliedAtUnixTime": 1784124010.5
+      }
+    ]
+  }
+}

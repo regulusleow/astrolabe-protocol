@@ -1,0 +1,39 @@
+{
+  "requestID": "00000000-0000-4000-8000-000000000002",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "applicationInfo",
+  "status": "success",
+  "payload": {
+    "application": {
+      "identifier": "com.example.demo",
+      "displayName": "Demo",
+      "version": "1.0",
+      "buildVersion": "42"
+    },
+    "target": {
+      "identifier": "target:demo:4242",
+      "processIdentifier": "4242",
+      "kind": "application",
+      "primary": true
+    },
+    "environment": {
+      "platform": "ios",
+      "operatingSystemVersion": "27.0",
+      "deviceCategory": "phone",
+      "deviceName": "iPhone 17 Pro Max",
+      "deviceModel": "iPhone18,2",
+      "virtualDevice": true,
+      "locale": "zh-CN",
+      "layoutDirection": "leftToRight",
+      "display": {
+        "logicalSize": { "width": 440, "height": 956, "unit": "logical" },
+        "pixelSize": { "width": 1320, "height": 2868, "unit": "pixel" },
+        "logicalToPixelScale": { "x": 3, "y": 3 },
+        "maximumRefreshRate": 120
+      },
+      "extensions": {
+        "ios.uikit.interfaceIdiom": "phone"
+      }
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "requestID": "00000000-0000-4000-8000-000000000003",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "hierarchySnapshot",
+  "status": "success",
+  "payload": {
+    "snapshotID": "snapshot:demo:1",
+    "capturedAtUnixTime": 1784124000.25,
+    "targetIdentifier": "target:demo:4242",
+    "orientation": "portrait",
+    "display": {
+      "logicalSize": { "width": 440, "height": 956, "unit": "logical" },
+      "pixelSize": { "width": 1320, "height": 2868, "unit": "pixel" },
+      "logicalToPixelScale": { "x": 3, "y": 3 },
+      "maximumRefreshRate": 120
+    },
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "width": 440,
+      "height": 956,
+      "coordinateSpace": "screen",
+      "unit": "logical"
+    },
+    "roots": [
+      {
+        "nodeID": "node:window:0",
+        "parentID": null,
+        "siblingIndex": 0,
+        "role": "window",
+        "runtimeType": {
+          "name": "UIWindow",
+          "ancestors": ["UIView", "UIResponder", "NSObject"]
+        },
+        "geometry": {
+          "bounds": { "x": 0, "y": 0, "width": 440, "height": 956, "coordinateSpace": "local", "unit": "logical" },
+          "frameInParent": null,
+          "frameInScreen": { "x": 0, "y": 0, "width": 440, "height": 956, "coordinateSpace": "screen", "unit": "logical" }
+        },
+        "visibility": {
+          "hidden": false,
+          "hiddenByAncestor": false,
+          "opacity": 1,
+          "effectiveOpacity": 1,
+          "intersectsViewport": true,
+          "fullyClippedByAncestor": false,
+          "onscreen": true
+        },
+        "clipsContent": false,
+        "backgroundColor": { "colorSpace": "srgb", "red": 1, "green": 1, "blue": 1, "alpha": 1 },
+        "text": null,
+        "accessibility": null,
+        "interaction": { "interactive": true, "enabled": null, "selected": null, "focused": null },
+        "availableDetailCategories": ["common.layout", "common.visual"],
+        "extensions": { "ios.uikit.sceneIdentifier": "scene:main" },
+        "children": [
+          {
+            "nodeID": "node:label:1",
+            "parentID": "node:window:0",
+            "siblingIndex": 0,
+            "role": "text",
+            "runtimeType": { "name": "UILabel", "ancestors": ["UIView", "UIResponder", "NSObject"] },
+            "geometry": {
+              "bounds": { "x": 0, "y": 0, "width": 160, "height": 24, "coordinateSpace": "local", "unit": "logical" },
+              "frameInParent": { "x": 24, "y": 120, "width": 160, "height": 24, "coordinateSpace": "parent", "unit": "logical" },
+              "frameInScreen": { "x": 24, "y": 120, "width": 160, "height": 24, "coordinateSpace": "screen", "unit": "logical" }
+            },
+            "visibility": {
+              "hidden": false,
+              "hiddenByAncestor": false,
+              "opacity": 1,
+              "effectiveOpacity": 1,
+              "intersectsViewport": true,
+              "fullyClippedByAncestor": false,
+              "onscreen": true
+            },
+            "clipsContent": false,
+            "backgroundColor": null,
+            "text": "Hello Astrolabe",
+            "accessibility": {
+              "element": true,
+              "identifier": "greetingLabel",
+              "label": "Hello Astrolabe",
+              "value": null,
+              "hint": null,
+              "traits": ["staticText"]
+            },
+            "interaction": { "interactive": false, "enabled": null, "selected": null, "focused": null },
+            "availableDetailCategories": ["common.layout", "common.text", "common.accessibility", "ios.uikit.autoLayout"],
+            "extensions": {},
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+}

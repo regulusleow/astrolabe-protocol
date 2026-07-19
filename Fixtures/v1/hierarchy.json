@@ -1,0 +1,51 @@
+{
+  "snapshotID": "00000000-0000-0000-0000-000000000002",
+  "capturedAtUnixTime": 1783791842,
+  "interfaceOrientation": "portrait",
+  "screen": {
+    "bounds": {
+      "origin": { "x": 0, "y": 0 },
+      "size": { "width": 390, "height": 844 }
+    },
+    "nativeBounds": {
+      "origin": { "x": 0, "y": 0 },
+      "size": { "width": 1170, "height": 2532 }
+    },
+    "scale": 3,
+    "nativeScale": 3,
+    "maximumFramesPerSecond": 60
+  },
+  "roots": [
+    {
+      "nodeID": 1,
+      "siblingIndex": 0,
+      "kind": "view",
+      "className": "UIWindow",
+      "classChain": ["UIWindow", "UIView", "UIResponder", "NSObject"],
+      "geometry": {
+        "frameInParent": {
+          "origin": { "x": 0, "y": 0 },
+          "size": { "width": 390, "height": 844 }
+        },
+        "frameInScreen": {
+          "origin": { "x": 0, "y": 0 },
+          "size": { "width": 390, "height": 844 }
+        },
+        "bounds": {
+          "origin": { "x": 0, "y": 0 },
+          "size": { "width": 390, "height": 844 }
+        }
+      },
+      "visibility": {
+        "hidden": false,
+        "hiddenByAncestor": false,
+        "alpha": 1,
+        "effectiveAlpha": 1,
+        "isVisible": true
+      },
+      "clipsToBounds": false,
+      "supportedDetailCategories": ["layout", "view"],
+      "children": []
+    }
+  ]
+}

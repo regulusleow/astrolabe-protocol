@@ -1,0 +1,11 @@
+{
+  "requestID": "00000000-0000-4000-8000-000000000011",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "vendor.experimentalInspection",
+  "status": "failure",
+  "error": {
+    "code": "unsupportedMethod",
+    "message": "The Runtime does not support this method.",
+    "recoverySuggestion": "Use a method advertised by the Runtime capabilities."
+  }
+}

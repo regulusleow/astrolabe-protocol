@@ -1,0 +1,7 @@
+{
+  "attributePattern": "fontSize",
+  "valueType": "number",
+  "targetRoles": ["text"],
+  "valueConstraints": null,
+  "extensions": {}
+}

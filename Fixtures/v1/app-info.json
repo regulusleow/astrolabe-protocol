@@ -1,0 +1,27 @@
+{
+  "displayName": "Demo",
+  "bundleIdentifier": "com.example.demo",
+  "processIdentifier": 42,
+  "runtimeVersion": "0.1.0",
+  "device": {
+    "name": "iPhone",
+    "model": "iPhone",
+    "modelIdentifier": "iPhone13,2",
+    "systemName": "iOS",
+    "systemVersion": "26.5",
+    "idiom": "phone"
+  },
+  "screen": {
+    "bounds": {
+      "origin": { "x": 0, "y": 0 },
+      "size": { "width": 390, "height": 844 }
+    },
+    "nativeBounds": {
+      "origin": { "x": 0, "y": 0 },
+      "size": { "width": 1170, "height": 2532 }
+    },
+    "scale": 3,
+    "nativeScale": 3,
+    "maximumFramesPerSecond": 60
+  }
+}

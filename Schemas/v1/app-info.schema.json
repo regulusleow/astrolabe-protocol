@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astrolabe.dev/schemas/v1/app-info.schema.json",
+  "title": "Astrolabe V1 App Information",
+  "type": "object",
+  "required": ["displayName", "bundleIdentifier", "processIdentifier", "runtimeVersion", "device", "screen"],
+  "properties": {
+    "displayName": { "type": "string", "minLength": 1 },
+    "bundleIdentifier": { "type": "string", "minLength": 1 },
+    "processIdentifier": { "type": "integer" },
+    "runtimeVersion": { "type": "string", "minLength": 1 },
+    "device": {
+      "type": "object",
+      "required": ["name", "model", "modelIdentifier", "systemName", "systemVersion", "idiom"],
+      "properties": {
+        "name": { "type": "string" },
+        "model": { "type": "string" },
+        "modelIdentifier": { "type": "string" },
+        "systemName": { "type": "string" },
+        "systemVersion": { "type": "string" },
+        "idiom": { "type": "string" }
+      }
+    },
+    "screen": {
+      "type": "object",
+      "required": ["bounds", "nativeBounds", "scale", "nativeScale", "maximumFramesPerSecond"],
+      "properties": {
+        "bounds": { "$ref": "#/$defs/rect" },
+        "nativeBounds": { "$ref": "#/$defs/rect" },
+        "scale": { "type": "number", "exclusiveMinimum": 0 },
+        "nativeScale": { "type": "number", "exclusiveMinimum": 0 },
+        "maximumFramesPerSecond": { "type": "integer", "minimum": 1 }
+      }
+    }
+  },
+  "$defs": {
+    "rect": {
+      "type": "object",
+      "required": ["origin", "size"],
+      "properties": {
+        "origin": {
+          "type": "object",
+          "required": ["x", "y"],
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          }
+        },
+        "size": {
+          "type": "object",
+          "required": ["width", "height"],
+          "properties": {
+            "width": { "type": "number" },
+            "height": { "type": "number" }
+          }
+        }
+      }
+    }
+  }
+}

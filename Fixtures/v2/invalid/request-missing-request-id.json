@@ -1,0 +1,5 @@
+{
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "applicationInfo",
+  "parameters": {}
+}

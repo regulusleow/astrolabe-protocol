@@ -1,0 +1,75 @@
+{
+  "requestID": "00000000-0000-4000-8000-000000000004",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "nodeDetail",
+  "status": "success",
+  "payload": {
+    "nodeID": "node:label:1",
+    "sections": [
+      {
+        "category": "common.text",
+        "attributes": [
+          { "identifier": "common.text.content", "value": { "type": "string", "value": "Hello Astrolabe" } },
+          { "identifier": "common.text.fontName", "value": { "type": "string", "value": ".SFUI-Regular" } },
+          { "identifier": "common.text.fontSize", "value": { "type": "measurement", "value": { "value": 16, "unit": "scaledLogical" } } },
+          { "identifier": "common.text.color", "value": { "type": "color", "value": { "colorSpace": "srgb", "red": 0.1, "green": 0.1, "blue": 0.1, "alpha": 1 } } },
+          {
+            "identifier": "common.text.runs",
+            "value": {
+              "type": "textRuns",
+              "value": [
+                {
+                  "range": { "location": 0, "length": 16 },
+                  "text": "Hello Astrolabe",
+                  "fontName": ".SFUI-Regular",
+                  "fontFamilyName": ".AppleSystemUIFont",
+                  "fontSize": { "value": 16, "unit": "scaledLogical" },
+                  "color": { "colorSpace": "srgb", "red": 0.1, "green": 0.1, "blue": 0.1, "alpha": 1 },
+                  "extensions": {}
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "category": "common.layout",
+        "attributes": [
+          {
+            "identifier": "common.layout.relations",
+            "value": {
+              "type": "layoutRelations",
+              "value": [
+                {
+                  "identifier": "greeting.leading",
+                  "source": { "nodeID": "node:label:1", "anchor": "leading" },
+                  "relation": "equal",
+                  "target": { "nodeID": "node:window:0", "anchor": "leading" },
+                  "multiplier": 1,
+                  "offset": { "value": 24, "unit": "logical" },
+                  "strength": 1,
+                  "active": true,
+                  "extensions": { "ios.uikit.priority": 1000 }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "category": "ios.uikit.autoLayout",
+        "attributes": [
+          {
+            "identifier": "ios.uikit.autoLayout.translatesAutoresizingMaskIntoConstraints",
+            "value": { "type": "boolean", "value": false }
+          },
+          {
+            "identifier": "ios.uikit.autoLayout.rawConstraints",
+            "value": { "type": "ios.uikit.autoLayout.constraintList", "value": [{ "priority": 1000 }] }
+          }
+        ]
+      }
+    ],
+    "extensions": {}
+  }
+}

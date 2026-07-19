@@ -1,0 +1,8 @@
+.build/
+.codegraph/
+.omo/
+.swiftpm/
+DerivedData/
+node_modules/
+*.xcuserstate
+.DS_Store

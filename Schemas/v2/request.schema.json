@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astrolabe.dev/schemas/v2/request.schema.json",
+  "title": "Astrolabe Protocol 2.0 Requests",
+  "oneOf": [
+    { "$ref": "#/$defs/handshakeRequest" },
+    { "$ref": "#/$defs/applicationInfoRequest" },
+    { "$ref": "#/$defs/hierarchySnapshotRequest" },
+    { "$ref": "#/$defs/nodeDetailRequest" },
+    { "$ref": "#/$defs/patchableAttributesRequest" },
+    { "$ref": "#/$defs/applyAttributePatchRequest" },
+    { "$ref": "#/$defs/listAttributePatchesRequest" },
+    { "$ref": "#/$defs/revertAttributePatchRequest" },
+    { "$ref": "#/$defs/clearAttributePatchesRequest" },
+    { "$ref": "#/$defs/cancelRequestRequest" },
+    { "$ref": "#/$defs/unknownMethodRequest" }
+  ],
+  "$defs": {
+    "handshakeRequest": {
+      "allOf": [
+        { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/requestEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "method": { "const": "handshake" },
+            "parameters": { "$ref": "https://astrolabe.dev/schemas/v2/session.schema.json#/$defs/handshakeParameters" }
+          }
+        }
+      ]
+    },
+    "applicationInfoRequest": {
+      "allOf": [
+        { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/requestEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "method": { "const": "applicationInfo" },
+            "parameters": { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/emptyObject" }
+          }
+        }
+      ]
+    },
+    "hierarchySnapshotRequest": {
+      "allOf": [
+        { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/requestEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "method": { "const": "hierarchySnapshot" },
+            "parameters": { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/emptyObject" }
+          }
+        }
+      ]
+    },
+    "nodeDetailRequest": {
+      "allOf": [
+        { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/requestEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "method": { "const": "nodeDetail" },
+            "parameters": { "$ref": "https://astrolabe.dev/schemas/v2/inspection.schema.json#/$defs/nodeDetailParameters" }
+          }
+        }
+      ]
+    },
+    "patchableAttributesRequest": {
+      "allOf": [
+        { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/requestEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "method": { "const": "patchableAttributes" },
+            "parameters": { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/emptyObject" }
+          }
+        }
+      ]
+    },
+    "applyAttributePatchRequest": {
+      "allOf": [
+        { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/requestEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "method": { "const": "applyAttributePatch" },
+            "parameters": { "$ref": "https://astrolabe.dev/schemas/v2/patching.schema.json#/$defs/applyAttributePatchParameters" }
+          }
+        }
+      ]
+    },
+    "listAttributePatchesRequest": {
+      "allOf": [
+        { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/requestEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "method": { "const": "listAttributePatches" },
+            "parameters": { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/emptyObject" }
+          }
+        }
+      ]
+    },
+    "revertAttributePatchRequest": {
+      "allOf": [
+        { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/requestEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "method": { "const": "revertAttributePatch" },
+            "parameters": { "$ref": "https://astrolabe.dev/schemas/v2/patching.schema.json#/$defs/revertAttributePatchParameters" }
+          }
+        }
+      ]
+    },
+    "clearAttributePatchesRequest": {
+      "allOf": [
+        { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/requestEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "method": { "const": "clearAttributePatches" },
+            "parameters": { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/emptyObject" }
+          }
+        }
+      ]
+    },
+    "cancelRequestRequest": {
+      "allOf": [
+        { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/requestEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "method": { "const": "cancelRequest" },
+            "parameters": { "$ref": "https://astrolabe.dev/schemas/v2/session.schema.json#/$defs/cancelRequestParameters" }
+          }
+        }
+      ]
+    },
+    "unknownMethodRequest": {
+      "allOf": [
+        { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/requestEnvelope" },
+        {
+          "type": "object",
+          "properties": {
+            "method": {
+              "not": {
+                "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/knownMethod"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

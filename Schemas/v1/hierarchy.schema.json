@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astrolabe.dev/schemas/v1/hierarchy.schema.json",
+  "title": "Astrolabe V1 Hierarchy Snapshot",
+  "$ref": "#/$defs/snapshot",
+  "$defs": {
+    "rect": {
+      "type": "object",
+      "required": ["origin", "size"],
+      "properties": {
+        "origin": {
+          "type": "object",
+          "required": ["x", "y"],
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          }
+        },
+        "size": {
+          "type": "object",
+          "required": ["width", "height"],
+          "properties": {
+            "width": { "type": "number" },
+            "height": { "type": "number" }
+          }
+        }
+      }
+    },
+    "screen": {
+      "type": "object",
+      "required": ["bounds", "nativeBounds", "scale", "nativeScale", "maximumFramesPerSecond"],
+      "properties": {
+        "bounds": { "$ref": "#/$defs/rect" },
+        "nativeBounds": { "$ref": "#/$defs/rect" },
+        "scale": { "type": "number", "exclusiveMinimum": 0 },
+        "nativeScale": { "type": "number", "exclusiveMinimum": 0 },
+        "maximumFramesPerSecond": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "geometry": {
+      "type": "object",
+      "required": ["frameInParent", "frameInScreen", "bounds"],
+      "properties": {
+        "frameInParent": { "$ref": "#/$defs/rect" },
+        "frameInScreen": { "$ref": "#/$defs/rect" },
+        "bounds": { "$ref": "#/$defs/rect" }
+      }
+    },
+    "visibility": {
+      "type": "object",
+      "required": ["hidden", "hiddenByAncestor", "alpha", "effectiveAlpha", "isVisible"],
+      "properties": {
+        "hidden": { "type": "boolean" },
+        "hiddenByAncestor": { "type": "boolean" },
+        "alpha": { "type": "number" },
+        "effectiveAlpha": { "type": "number" },
+        "isVisible": { "type": "boolean" }
+      }
+    },
+    "node": {
+      "type": "object",
+      "required": ["nodeID", "siblingIndex", "kind", "className", "classChain", "geometry", "visibility", "clipsToBounds", "supportedDetailCategories", "children"],
+      "properties": {
+        "nodeID": { "type": "integer", "minimum": 1 },
+        "parentID": { "type": ["integer", "null"], "minimum": 1 },
+        "siblingIndex": { "type": "integer", "minimum": 0 },
+        "kind": { "type": "string", "minLength": 1 },
+        "className": { "type": "string", "minLength": 1 },
+        "classChain": { "type": "array", "items": { "type": "string" } },
+        "geometry": { "$ref": "#/$defs/geometry" },
+        "visibility": { "$ref": "#/$defs/visibility" },
+        "clipsToBounds": { "type": "boolean" },
+        "backgroundColor": { "type": ["object", "null"] },
+        "text": { "type": ["string", "null"] },
+        "accessibility": { "type": ["object", "null"] },
+        "supportedDetailCategories": { "type": "array", "items": { "type": "string" } },
+        "children": { "type": "array", "items": { "$ref": "#/$defs/node" } }
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "required": ["snapshotID", "capturedAtUnixTime", "interfaceOrientation", "screen", "roots"],
+      "properties": {
+        "snapshotID": { "type": "string", "format": "uuid" },
+        "capturedAtUnixTime": { "type": "number" },
+        "interfaceOrientation": { "type": "string", "minLength": 1 },
+        "screen": { "$ref": "#/$defs/screen" },
+        "roots": { "type": "array", "items": { "$ref": "#/$defs/node" } }
+      }
+    }
+  }
+}

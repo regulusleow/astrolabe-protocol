@@ -1,0 +1,18 @@
+{
+  "name": "astrolabe-protocol-contract",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:schema": "node scripts/validate-contract.mjs",
+    "test:swift-contract": "swift test --filter ProtocolFixtureTests",
+    "version:check": "node scripts/version-sync.mjs --check",
+    "version:set": "node scripts/version-sync.mjs --set",
+    "release:prepare": "node scripts/release-prepare.mjs",
+    "test": "npm run version:check && npm run test:schema && npm run test:swift-contract && node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1"
+  }
+}

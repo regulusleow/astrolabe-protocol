@@ -1,0 +1,12 @@
+{
+  "requestID": "10000000-0000-4000-8000-000000000004",
+  "protocolVersion": { "major": 2, "minor": 0 },
+  "method": "nodeDetail",
+  "status": "failure",
+  "payload": { "nodeID": "node:label:1", "sections": [] },
+  "error": {
+    "code": "nodeNotFound",
+    "message": "The node does not exist.",
+    "recoverySuggestion": null
+  }
+}
