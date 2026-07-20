@@ -40,6 +40,19 @@ class RuntimeFrameCodecTest {
     }
 
     @Test
+    fun `stream decoder handles payloads delivered one byte at a time`() {
+        val codec = RuntimeFrameCodec()
+        val payload = ByteArray(8 * 1024) { index -> index.toByte() }
+        val frame = codec.encode(payload)
+        val decoder = codec.makeStreamDecoder()
+        val decodedPayloads = frame.flatMap { byte -> decoder.append(byteArrayOf(byte)) }
+
+        assertEquals(1, decodedPayloads.size)
+        assertContentEquals(payload, decodedPayloads.single())
+        assertEquals(0, decoder.pendingByteCount)
+    }
+
+    @Test
     fun `codec rejects empty and oversized payloads`() {
         val codec = RuntimeFrameCodec(maximumPayloadSize = 2)
 

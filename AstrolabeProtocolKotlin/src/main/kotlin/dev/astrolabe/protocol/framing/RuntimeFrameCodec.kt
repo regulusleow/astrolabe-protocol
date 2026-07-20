@@ -56,56 +56,88 @@ public class RuntimeFrameCodec(
 public class RuntimeFrameStreamDecoder internal constructor(
     private val maximumPayloadSize: Int
 ) {
-    private var buffer: ByteArray = byteArrayOf()
+    private val header = ByteArray(RuntimeFrameCodec.FRAME_HEADER_SIZE)
+    private var headerByteCount: Int = 0
+    private var payload: ByteArray? = null
+    private var payloadByteCount: Int = 0
 
     /** Number of bytes retained while waiting for a complete frame. */
     public val pendingByteCount: Int
-        get() = buffer.size
+        get() = headerByteCount + payloadByteCount
 
     /** Appends bytes and returns every complete payload now available. */
     public fun append(data: ByteArray): List<ByteArray> {
-        if (data.isNotEmpty()) {
-            buffer += data
-        }
-
         val payloads = mutableListOf<ByteArray>()
         var offset = 0
-        while (buffer.size - offset >= RuntimeFrameCodec.FRAME_HEADER_SIZE) {
-            val payloadLength = readPayloadLength(offset)
-            if (payloadLength == 0L) {
-                throw RuntimeFrameException.EmptyPayload
-            }
-            if (payloadLength > maximumPayloadSize.toLong()) {
-                throw RuntimeFrameException.PayloadTooLarge(
-                    actual = payloadLength,
-                    maximum = maximumPayloadSize
+        while (offset < data.size) {
+            if (payload == null) {
+                val headerBytesToCopy = minOf(
+                    RuntimeFrameCodec.FRAME_HEADER_SIZE - headerByteCount,
+                    data.size - offset
                 )
+                data.copyInto(
+                    destination = header,
+                    destinationOffset = headerByteCount,
+                    startIndex = offset,
+                    endIndex = offset + headerBytesToCopy
+                )
+                headerByteCount += headerBytesToCopy
+                offset += headerBytesToCopy
+                if (headerByteCount < RuntimeFrameCodec.FRAME_HEADER_SIZE) {
+                    continue
+                }
+                payload = ByteArray(validatedPayloadLength())
             }
 
-            val frameLength = RuntimeFrameCodec.FRAME_HEADER_SIZE + payloadLength.toInt()
-            if (buffer.size - offset < frameLength) {
-                break
+            val currentPayload = payload ?: continue
+            val payloadBytesToCopy = minOf(
+                currentPayload.size - payloadByteCount,
+                data.size - offset
+            )
+            data.copyInto(
+                destination = currentPayload,
+                destinationOffset = payloadByteCount,
+                startIndex = offset,
+                endIndex = offset + payloadBytesToCopy
+            )
+            payloadByteCount += payloadBytesToCopy
+            offset += payloadBytesToCopy
+            if (payloadByteCount == currentPayload.size) {
+                payloads += currentPayload
+                resetFrameState()
             }
-
-            val payloadStart = offset + RuntimeFrameCodec.FRAME_HEADER_SIZE
-            payloads += buffer.copyOfRange(payloadStart, offset + frameLength)
-            offset += frameLength
-        }
-
-        if (offset > 0) {
-            buffer = buffer.copyOfRange(offset, buffer.size)
         }
         return payloads
     }
 
     /** Discards any incomplete frame bytes. */
     public fun reset() {
-        buffer = byteArrayOf()
+        resetFrameState()
     }
 
-    private fun readPayloadLength(offset: Int): Long =
+    private fun validatedPayloadLength(): Int {
+        val payloadLength = readPayloadLength()
+        if (payloadLength == 0L) {
+            throw RuntimeFrameException.EmptyPayload
+        }
+        if (payloadLength > maximumPayloadSize.toLong()) {
+            throw RuntimeFrameException.PayloadTooLarge(
+                actual = payloadLength,
+                maximum = maximumPayloadSize
+            )
+        }
+        return payloadLength.toInt()
+    }
+
+    private fun resetFrameState() {
+        headerByteCount = 0
+        payload = null
+        payloadByteCount = 0
+    }
+
+    private fun readPayloadLength(): Long =
         (0 until RuntimeFrameCodec.FRAME_HEADER_SIZE).fold(0L) { length, index ->
-            (length shl 8) or (buffer[offset + index].toLong() and 0xFF)
+            (length shl 8) or (header[index].toLong() and 0xFF)
         }
 }
 
