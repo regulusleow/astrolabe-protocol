@@ -39,6 +39,7 @@ export function prepareRelease({
   runRequired(commandRunner, "npm", ["test"]);
   runRequired(commandRunner, "swift", ["test", "--parallel"]);
   runRequired(commandRunner, "swift", ["build", "-c", "release"]);
+  runRequired(commandRunner, "./gradlew", [":AstrolabeProtocolKotlin:build"]);
   requireOnlyVersionChanges(commandRunner, updatedPaths);
   runRequired(commandRunner, "git", ["diff", "--check"]);
   runRequired(commandRunner, "git", ["add", "--", ...updatedPaths]);

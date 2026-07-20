@@ -55,3 +55,27 @@ jobs:
 
       - name: Build release product
         run: swift build -c release
+
+  kotlin:
+    name: Kotlin tests and publication build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Run Kotlin tests
+        run: ./gradlew :AstrolabeProtocolKotlin:test
+
+      - name: Build Kotlin publication
+        run: ./gradlew :AstrolabeProtocolKotlin:publishToMavenLocal
