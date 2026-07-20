@@ -14,11 +14,11 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 
 /** Encodes and decodes platform-neutral Astrolabe wire envelopes. */
@@ -38,6 +38,10 @@ public class RuntimeMessageCodec {
         json.decodeFromJsonElement(serializer, parseDocument(data))
     }
 
+    /** Encodes a standalone value through an explicit wire serializer. */
+    public fun <T> encodeValue(value: T, serializer: KSerializer<T>): ByteArray =
+        encodeDocument(json.encodeToJsonElement(serializer, value))
+
     /** Decodes and validates a request envelope. */
     public fun decodeRequest(data: ByteArray): RuntimeRequestEnvelope = wrapDecode {
         val document = requireObject(parseDocument(data))
@@ -49,7 +53,27 @@ public class RuntimeMessageCodec {
     /** Encodes a request envelope. */
     public fun encodeRequest(request: RuntimeRequestEnvelope): ByteArray {
         validateRequest(request)
-        return json.encodeToString(request).encodeToByteArray()
+        return encodeDocument(json.encodeToJsonElement(request))
+    }
+
+    /** Encodes a typed request without exposing JSON assembly to the caller. */
+    public fun <T> encodeRequest(
+        requestID: String,
+        contract: RuntimeMethodContract<T>,
+        parameters: T
+    ): ByteArray {
+        val document = json.encodeToJsonElement(contract.serializer, parameters)
+        val parameterObject = runCatching { document.jsonObject }.getOrElse { error ->
+            throw RuntimeMessageException.InvalidEnvelope("Request parameters must encode as an object", error)
+        }
+        return encodeRequest(
+            RuntimeRequestEnvelope(
+                requestID = requestID,
+                protocolVersion = RuntimeProtocolVersion.V2,
+                method = contract.method,
+                parameters = parameterObject
+            )
+        )
     }
 
     /** Decodes method-specific request parameters from an already validated envelope. */
@@ -122,8 +146,38 @@ public class RuntimeMessageCodec {
                 }
             }
         }
-        return json.encodeToString(document).encodeToByteArray()
+        return encodeDocument(document)
     }
+
+    /** Encodes a typed successful response without exposing JSON assembly to the caller. */
+    public fun <T> encodeSuccessResponse(
+        requestID: String,
+        contract: RuntimeMethodContract<T>,
+        payload: T
+    ): ByteArray = encodeResponse(
+        RuntimeResponseEnvelope(
+            requestID = requestID,
+            protocolVersion = RuntimeProtocolVersion.V2,
+            method = contract.method,
+            outcome = RuntimeResponseOutcome.Success(
+                json.encodeToJsonElement(contract.serializer, payload)
+            )
+        )
+    )
+
+    /** Encodes a structured failure for one method. */
+    public fun encodeFailureResponse(
+        requestID: String,
+        method: RuntimeMethod,
+        error: RuntimeError
+    ): ByteArray = encodeResponse(
+        RuntimeResponseEnvelope(
+            requestID = requestID,
+            protocolVersion = RuntimeProtocolVersion.V2,
+            method = method,
+            outcome = RuntimeResponseOutcome.Failure(error)
+        )
+    )
 
     /** Decodes the successful payload from an already validated response envelope. */
     public fun <T> decodeSuccessPayload(
@@ -141,6 +195,12 @@ public class RuntimeMessageCodec {
     private fun parseDocument(data: ByteArray): JsonElement = wrapDecode {
         documentValidator.validate(data)
         json.parseToJsonElement(data.decodeToString())
+    }
+
+    private fun encodeDocument(document: JsonElement): ByteArray = wrapEncode {
+        val data = json.encodeToString(document).encodeToByteArray()
+        documentValidator.validate(data)
+        data
     }
 
     private fun requireObject(document: JsonElement): JsonObject =
@@ -174,10 +234,12 @@ public class RuntimeMessageCodec {
     private fun JsonObject.requireMember(name: String): JsonElement =
         this[name] ?: throw RuntimeMessageException.InvalidEnvelope("Missing required member: $name")
 
-    private fun JsonObject.requireString(name: String): String = try {
-        requireMember(name).jsonPrimitive.content
-    } catch (error: IllegalArgumentException) {
-        throw RuntimeMessageException.InvalidEnvelope("Member $name must be a string", error)
+    private fun JsonObject.requireString(name: String): String {
+        val primitive = requireMember(name) as? JsonPrimitive
+        if (primitive == null || !primitive.isString) {
+            throw RuntimeMessageException.InvalidEnvelope("Member $name must be a string")
+        }
+        return primitive.content
     }
 
     private inline fun <T> wrapDecode(operation: () -> T): T = try {
@@ -188,6 +250,16 @@ public class RuntimeMessageCodec {
         throw RuntimeMessageException.InvalidDocument("Unable to decode JSON document", error)
     } catch (error: IllegalArgumentException) {
         throw RuntimeMessageException.InvalidDocument("Unable to decode JSON document", error)
+    }
+
+    private inline fun <T> wrapEncode(operation: () -> T): T = try {
+        operation()
+    } catch (error: RuntimeMessageException) {
+        throw error
+    } catch (error: SerializationException) {
+        throw RuntimeMessageException.InvalidDocument("Unable to encode JSON document", error)
+    } catch (error: IllegalArgumentException) {
+        throw RuntimeMessageException.InvalidDocument("Unable to encode JSON document", error)
     }
 }
 

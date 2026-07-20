@@ -20,7 +20,18 @@ public data class RuntimeApplication(
     public val version: String?,
     /** Application build version when available. */
     public val buildVersion: String?
-)
+) {
+    init {
+        require(identifier.isNotEmpty() && identifier.length <= 512) {
+            "Application identifier must contain between 1 and 512 characters"
+        }
+        require(displayName.isNotEmpty() && displayName.length <= 256) {
+            "Application display name must contain between 1 and 256 characters"
+        }
+        require(version == null || version.length <= 64) { "Application version is too long" }
+        require(buildVersion == null || buildVersion.length <= 64) { "Application build version is too long" }
+    }
+}
 
 /** Inspected process instance. */
 @Serializable
@@ -33,7 +44,16 @@ public data class RuntimeTarget(
     public val kind: String,
     /** Whether this is the Runtime's primary inspection target. */
     public val primary: Boolean
-)
+) {
+    init {
+        require(processIdentifier == null || processIdentifier.length <= 128) {
+            "Process identifier is too long"
+        }
+        require(kind.isNotEmpty() && kind.length <= 64) {
+            "Target kind must contain between 1 and 64 characters"
+        }
+    }
+}
 
 /** Effective interface layout direction. */
 @Serializable
@@ -66,7 +86,22 @@ public data class RuntimeEnvironment(
     public val display: RuntimeDisplayInfo,
     /** Optional namespaced platform facts. */
     public val extensions: RuntimeExtensionMap? = null
-)
+) {
+    init {
+        require(platform.isNotEmpty() && platform.length <= 64) {
+            "Platform must contain between 1 and 64 characters"
+        }
+        require(operatingSystemVersion.isNotEmpty() && operatingSystemVersion.length <= 64) {
+            "Operating-system version must contain between 1 and 64 characters"
+        }
+        require(deviceCategory.isNotEmpty() && deviceCategory.length <= 64) {
+            "Device category must contain between 1 and 64 characters"
+        }
+        require(deviceName == null || deviceName.length <= 256) { "Device name is too long" }
+        require(deviceModel == null || deviceModel.length <= 256) { "Device model is too long" }
+        require(locale == null || locale.length <= 64) { "Locale identifier is too long" }
+    }
+}
 
 /** Successful application-info response payload. */
 @Serializable
@@ -90,15 +125,9 @@ public data class RuntimeApplicationInfoPayload(
 
 /** Empty parameters for the application-info method. */
 @Serializable
-public class RuntimeApplicationInfoParameters {
-    public companion object {
-        /** Typed request contract for the application-info method. */
-        public val contract: RuntimeMethodContract<RuntimeApplicationInfoParameters> by lazy {
-            RuntimeMethodContract(RuntimeMethod.applicationInfo, serializer())
-        }
+public data object RuntimeApplicationInfoParameters {
+    /** Typed request contract for the application-info method. */
+    public val contract: RuntimeMethodContract<RuntimeApplicationInfoParameters> by lazy {
+        RuntimeMethodContract(RuntimeMethod.applicationInfo, serializer())
     }
-
-    override fun equals(other: Any?): Boolean = other is RuntimeApplicationInfoParameters
-
-    override fun hashCode(): Int = javaClass.hashCode()
 }

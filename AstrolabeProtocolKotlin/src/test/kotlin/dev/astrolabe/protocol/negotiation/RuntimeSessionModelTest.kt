@@ -8,6 +8,7 @@
 package dev.astrolabe.protocol
 
 import java.io.File
+import kotlinx.serialization.json.JsonPrimitive
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -40,6 +41,30 @@ class RuntimeSessionModelTest {
         assertEquals("ios", payload.platform)
         assertEquals(RuntimeProtocolVersion.V2, payload.negotiatedProtocolVersion)
         assertEquals("astrolabe.runtime.ios", payload.runtime.identifier.rawValue)
+    }
+
+    @Test
+    fun `typed handshake values round trip without exposing JSON assembly`() {
+        val sourceRequest = codec.decodeRequest(fixture("v2/valid/handshake-request.json"))
+        val parameters = codec.decodeRequestParameters(sourceRequest, RuntimeHandshakeParameters.contract)
+        val encodedRequest = codec.encodeRequest(
+            requestID = sourceRequest.requestID,
+            contract = RuntimeHandshakeParameters.contract,
+            parameters = parameters
+        )
+
+        val sourceResponse = codec.decodeResponse(fixture("v2/valid/handshake-response.json"))
+        val payload = codec.decodeSuccessPayload(sourceResponse, RuntimeHandshakePayload.contract)
+        val encodedResponse = codec.encodeSuccessResponse(
+            requestID = sourceResponse.requestID,
+            contract = RuntimeHandshakePayload.contract,
+            payload = payload
+        )
+
+        val decodedRequest = codec.decodeRequest(encodedRequest)
+        val decodedResponse = codec.decodeResponse(encodedResponse)
+        assertEquals(parameters, codec.decodeRequestParameters(decodedRequest, RuntimeHandshakeParameters.contract))
+        assertEquals(payload, codec.decodeSuccessPayload(decodedResponse, RuntimeHandshakePayload.contract))
     }
 
     @Test
@@ -91,6 +116,20 @@ class RuntimeSessionModelTest {
         assertFailsWith<IllegalArgumentException> { RuntimeErrorCode("customFailure") }
         assertFailsWith<IllegalArgumentException> {
             RuntimeExtensionMap(mapOf("invalid" to kotlinx.serialization.json.JsonNull))
+        }
+        assertFailsWith<RuntimeMessageException.InvalidDocument> {
+            codec.decodeValue(
+                fixture("v2/invalid/extension-key-not-namespaced.json"),
+                RuntimeExtensionMap.serializer()
+            )
+        }
+        assertFailsWith<RuntimeMessageException.InvalidDocument> {
+            codec.encodeValue(
+                RuntimeExtensionMap(
+                    mapOf("vendor.unsafeInteger" to JsonPrimitive(9_007_199_254_740_992L))
+                ),
+                RuntimeExtensionMap.serializer()
+            )
         }
     }
 

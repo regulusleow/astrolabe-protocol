@@ -48,7 +48,7 @@ public value class RuntimeMethod(
 }
 
 /** Binds one method identifier to the serializer for its parameters or payload. */
-public data class RuntimeMethodContract<T>(
+public class RuntimeMethodContract<T>(
     /** Method accepted by this contract. */
     public val method: RuntimeMethod,
     /** Serializer for the method-specific value. */

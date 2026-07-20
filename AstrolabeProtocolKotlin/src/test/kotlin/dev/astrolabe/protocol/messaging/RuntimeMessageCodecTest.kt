@@ -54,6 +54,17 @@ class RuntimeMessageCodecTest {
         assertFailsWith<RuntimeMessageException.InvalidDocument> {
             codec.decodeRequest("[]".encodeToByteArray())
         }
+        assertFailsWith<RuntimeMessageException.InvalidEnvelope> {
+            codec.decodeResponse(
+                """{
+                    "requestID":"00000000-0000-4000-8000-000000000001",
+                    "protocolVersion":{"major":2,"minor":0},
+                    "method":1,
+                    "status":"success",
+                    "payload":{}
+                }""".encodeToByteArray()
+            )
+        }
     }
 
     @Test
