@@ -1,5 +1,7 @@
 # Astrolabe Protocol
 
+English | [简体中文](README.zh-CN.md)
+
 Astrolabe Protocol defines the platform-neutral wire contract shared by the
 Astrolabe Host and platform Runtime SDKs.
 
