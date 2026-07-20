@@ -67,7 +67,8 @@ test("release preparation synchronizes, verifies, commits, and tags a prerelease
     assert.ok(commands.some((command) => command.join(" ") === "swift build -c release"));
     assert.ok(
       commands.some(
-        (command) => command.join(" ") === "./gradlew :AstrolabeProtocolKotlin:build"
+        (command) => command.join(" ") ===
+          "./gradlew :AstrolabeProtocolKotlin:publishToMavenLocal"
       )
     );
     assert.ok(commands.some((command) => command.join(" ") === "git tag -a 2.0.0-rc.2 -m Astrolabe Protocol 2.0.0-rc.2"));
