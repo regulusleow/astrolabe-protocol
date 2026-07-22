@@ -181,7 +181,8 @@ private class RuntimeJsonParser(
                         )
                     }
                 }
-                byte < CharacterByte.SPACE -> invalid("JSON string contains a control byte")
+                byte.toInt() in 0 until CharacterByte.SPACE.toInt() ->
+                    invalid("JSON string contains a control byte")
             }
         }
         invalid("JSON string is unterminated")
@@ -249,6 +250,9 @@ private class RuntimeJsonParser(
             byte == CharacterByte.E ||
             byte == CharacterByte.UPPERCASE_E ||
             byte in CharacterByte.ZERO..CharacterByte.NINE
+
+    private fun invalid(message: String): Nothing =
+        throw RuntimeMessageException.InvalidDocument("$message at byte offset $index")
 
     private companion object {
         private const val MAXIMUM_SAFE_INTEGER: Long = 9_007_199_254_740_991

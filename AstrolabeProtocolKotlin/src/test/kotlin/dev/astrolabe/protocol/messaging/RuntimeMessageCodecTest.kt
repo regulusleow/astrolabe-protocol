@@ -94,6 +94,13 @@ class RuntimeMessageCodecTest {
     }
 
     @Test
+    fun `codec accepts non ASCII UTF-8 strings`() {
+        val document = codec.decodeDocument("""{"value":"café"}""".encodeToByteArray())
+
+        assertEquals(JsonPrimitive("café"), assertIs<JsonObject>(document)["value"])
+    }
+
+    @Test
     fun `codec decodes every valid request and response fixture`() {
         validFixtureNames()
             .filterNot { it == "vector-attribute-value.json" }
