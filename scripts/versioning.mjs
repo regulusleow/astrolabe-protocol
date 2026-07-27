@@ -8,6 +8,7 @@ export const versionedPaths = Object.freeze([
   gradlePropertiesPath,
   metadataPath,
   "README.md",
+  "README.zh-CN.md",
   "package-lock.json",
   "package.json"
 ]);
@@ -58,6 +59,11 @@ export function synchronizeRepositoryVersion(projectRoot, version) {
       `exact: "${version}"`
     ),
     textVersionUpdate(
+      join(projectRoot, "README.zh-CN.md"),
+      documentationVersionPattern,
+      `exact: "${version}"`
+    ),
+    textVersionUpdate(
       join(projectRoot, gradlePropertiesPath),
       gradleVersionPattern,
       `astrolabeVersion=${version}`
@@ -91,6 +97,13 @@ export function versionConsistencyIssues(projectRoot) {
   inspectTextVersion(
     join(projectRoot, "README.md"),
     "README.md",
+    documentationVersionPattern,
+    expectedVersion,
+    issues
+  );
+  inspectTextVersion(
+    join(projectRoot, "README.zh-CN.md"),
+    "README.zh-CN.md",
     documentationVersionPattern,
     expectedVersion,
     issues

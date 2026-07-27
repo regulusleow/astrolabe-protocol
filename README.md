@@ -26,7 +26,7 @@ Add the package through Swift Package Manager:
 ```swift
 .package(
     url: "https://github.com/regulusleow/astrolabe-protocol.git",
-    exact: "1.0.0"
+    exact: "2.0.0"
 )
 ```
 

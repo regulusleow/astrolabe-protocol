@@ -32,6 +32,10 @@ test("release preparation synchronizes, verifies, commits, and tags a prerelease
       join(projectRoot, "README.md"),
       '.package(url: "example", exact: "2.0.0-rc.1")\n'
     );
+    writeFileSync(
+      join(projectRoot, "README.zh-CN.md"),
+      '.package(url: "example", exact: "2.0.0-rc.1")\n'
+    );
     writeFileSync(join(projectRoot, "gradle.properties"), "astrolabeVersion=2.0.0-rc.1\n");
     const sourceDirectory = join(projectRoot, "Sources/AstrolabeProtocol/Core");
     mkdirSync(sourceDirectory, { recursive: true });
@@ -63,6 +67,10 @@ test("release preparation synchronizes, verifies, commits, and tags a prerelease
     assert.match(
       readFileSync(join(projectRoot, "gradle.properties"), "utf8"),
       /^astrolabeVersion=2\.0\.0-rc\.2$/m
+    );
+    assert.match(
+      readFileSync(join(projectRoot, "README.zh-CN.md"), "utf8"),
+      /exact: "2\.0\.0-rc\.2"/
     );
     assert.ok(commands.some((command) => command.join(" ") === "swift build -c release"));
     assert.ok(

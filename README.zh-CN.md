@@ -22,7 +22,7 @@ UIKit、Android View、Transport Listener、设备发现、截图、CLI 命令�
 ```swift
 .package(
     url: "https://github.com/regulusleow/astrolabe-protocol.git",
-    exact: "1.0.0"
+    exact: "2.0.0"
 )
 ```
 
