@@ -116,7 +116,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Publish and release Kotlin artifact
-        run: ./gradlew :AstrolabeProtocolKotlin:publishAndReleaseToMavenCentral
+        run: >-
+          ./gradlew
+          --no-configuration-cache
+          :AstrolabeProtocolKotlin:publishAndReleaseToMavenCentral
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
