@@ -32,6 +32,11 @@ test("release preparation synchronizes, verifies, commits, and tags a prerelease
       join(projectRoot, "README.md"),
       '.package(url: "example", exact: "2.0.0-rc.1")\n'
     );
+    writeFileSync(
+      join(projectRoot, "README.zh-CN.md"),
+      '.package(url: "example", exact: "2.0.0-rc.1")\n'
+    );
+    writeFileSync(join(projectRoot, "gradle.properties"), "astrolabeVersion=2.0.0-rc.1\n");
     const sourceDirectory = join(projectRoot, "Sources/AstrolabeProtocol/Core");
     mkdirSync(sourceDirectory, { recursive: true });
     writeFileSync(
@@ -59,7 +64,21 @@ test("release preparation synchronizes, verifies, commits, and tags a prerelease
 
     assert.equal(result.version, "2.0.0-rc.2");
     assert.equal(JSON.parse(readFileSync(join(projectRoot, "package.json"))).version, "2.0.0-rc.2");
+    assert.match(
+      readFileSync(join(projectRoot, "gradle.properties"), "utf8"),
+      /^astrolabeVersion=2\.0\.0-rc\.2$/m
+    );
+    assert.match(
+      readFileSync(join(projectRoot, "README.zh-CN.md"), "utf8"),
+      /exact: "2\.0\.0-rc\.2"/
+    );
     assert.ok(commands.some((command) => command.join(" ") === "swift build -c release"));
+    assert.ok(
+      commands.some(
+        (command) => command.join(" ") ===
+          "./gradlew :AstrolabeProtocolKotlin:publishToMavenLocal"
+      )
+    );
     assert.ok(commands.some((command) => command.join(" ") === "git tag -a 2.0.0-rc.2 -m Astrolabe Protocol 2.0.0-rc.2"));
   } finally {
     rmSync(projectRoot, { recursive: true, force: true });

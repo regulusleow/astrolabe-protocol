@@ -2,10 +2,13 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const metadataPath = "Sources/AstrolabeProtocol/Core/RuntimeProtocolMetadata.swift";
+const gradlePropertiesPath = "gradle.properties";
 
 export const versionedPaths = Object.freeze([
+  gradlePropertiesPath,
   metadataPath,
   "README.md",
+  "README.zh-CN.md",
   "package-lock.json",
   "package.json"
 ]);
@@ -16,6 +19,7 @@ const releaseVersionPattern = new RegExp(
 );
 const swiftVersionPattern = /static let packageVersion = "([^"]+)"/g;
 const documentationVersionPattern = /exact: "([^"]+)"/g;
+const gradleVersionPattern = /^astrolabeVersion=(.+)$/gm;
 
 export function assertReleaseVersion(version) {
   if (!releaseVersionPattern.test(version)) {
@@ -53,6 +57,16 @@ export function synchronizeRepositoryVersion(projectRoot, version) {
       join(projectRoot, "README.md"),
       documentationVersionPattern,
       `exact: "${version}"`
+    ),
+    textVersionUpdate(
+      join(projectRoot, "README.zh-CN.md"),
+      documentationVersionPattern,
+      `exact: "${version}"`
+    ),
+    textVersionUpdate(
+      join(projectRoot, gradlePropertiesPath),
+      gradleVersionPattern,
+      `astrolabeVersion=${version}`
     )
   ];
   updates.forEach(({ path, content }) => writeFileSync(path, content));
@@ -84,6 +98,20 @@ export function versionConsistencyIssues(projectRoot) {
     join(projectRoot, "README.md"),
     "README.md",
     documentationVersionPattern,
+    expectedVersion,
+    issues
+  );
+  inspectTextVersion(
+    join(projectRoot, "README.zh-CN.md"),
+    "README.zh-CN.md",
+    documentationVersionPattern,
+    expectedVersion,
+    issues
+  );
+  inspectTextVersion(
+    join(projectRoot, gradlePropertiesPath),
+    gradlePropertiesPath,
+    gradleVersionPattern,
     expectedVersion,
     issues
   );

@@ -1,5 +1,7 @@
 # Astrolabe Protocol
 
+English | [简体中文](README.zh-CN.md)
+
 Astrolabe Protocol defines the platform-neutral wire contract shared by the
 Astrolabe Host and platform Runtime SDKs.
 
@@ -24,7 +26,7 @@ Add the package through Swift Package Manager:
 ```swift
 .package(
     url: "https://github.com/regulusleow/astrolabe-protocol.git",
-    exact: "1.0.0"
+    exact: "2.0.0"
 )
 ```
 

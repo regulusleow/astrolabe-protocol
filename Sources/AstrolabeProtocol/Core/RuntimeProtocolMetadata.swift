@@ -7,7 +7,7 @@
 
 public enum RuntimeProtocolMetadata {
     /// AstrolabeProtocol package release version.
-    public static let packageVersion = "1.0.0"
+    public static let packageVersion = "2.0.0"
 
     /// Wire protocol version implemented by this package.
     public static let wireVersion = RuntimeProtocolVersion.v2

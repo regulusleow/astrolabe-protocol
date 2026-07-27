@@ -1,8 +1,10 @@
 .build/
+.gradle/
 .codegraph/
 .omo/
 .swiftpm/
 DerivedData/
 node_modules/
+**/build/
 *.xcuserstate
 .DS_Store
