@@ -10,7 +10,6 @@ test("Kotlin publication disables the unsupported configuration cache", async ()
     /--no-configuration-cache\s+:AstrolabeProtocolKotlin:publishAndReleaseToMavenCentral/
   );
 });
-
 test("Kotlin publication can retry an immutable release tag", async () => {
   const workflow = await readFile(".github/workflows/ci.yml", "utf8");
 
