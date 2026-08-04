@@ -1,13 +1,14 @@
 import { readFileSync, readdirSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 
+import { discoverFixturePaths } from "./fixture-discovery.mjs";
+
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const schemaDirectory = join(repositoryRoot, "Contract/v2/Schemas");
-const fixtureDirectory = join(repositoryRoot, "Contract/v2/Fixtures");
 const manifest = readJSON(join(repositoryRoot, "Contract/v2/manifest.json"));
 const ajv = new Ajv2020({ allErrors: true, strict: true, allowUnionTypes: true });
 addFormats(ajv);
@@ -92,14 +93,20 @@ for (const method of manifest.methods) {
   }
 }
 
-const fixtureFiles = ["valid", "invalid"].flatMap((directory) =>
-  readdirSync(join(fixtureDirectory, directory))
-    .filter((name) => name.endsWith(".json"))
-    .map((name) => relative(repositoryRoot, join(fixtureDirectory, directory, name)))
-);
+const fixtureFiles = discoverFixturePaths(repositoryRoot, manifest.fixtureRoots);
+const discoveredFixtures = new Set(fixtureFiles);
 const unmanifestedFixtures = fixtureFiles.filter((path) => !manifestedFixtures.has(path));
 if (unmanifestedFixtures.length > 0) {
   throw new Error(`Unregistered V2 fixtures found: ${unmanifestedFixtures.join(", ")}`);
+}
+
+const undiscoveredFixtures = [...manifestedFixtures]
+  .filter((path) => !discoveredFixtures.has(path))
+  .sort();
+if (undiscoveredFixtures.length > 0) {
+  throw new Error(
+    `Registered V2 fixtures are outside fixtureRoots: ${undiscoveredFixtures.join(", ")}`
+  );
 }
 
 function assertSchemaExists(reference) {

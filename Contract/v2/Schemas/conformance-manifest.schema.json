@@ -3,11 +3,20 @@
   "$id": "https://astrolabe.dev/schemas/v2/conformance-manifest.schema.json",
   "title": "Astrolabe Protocol 2.0 Conformance Manifest",
   "type": "object",
-  "required": ["schemaVersion", "wireProtocolVersion", "methods", "cases"],
+  "required": ["schemaVersion", "wireProtocolVersion", "fixtureRoots", "methods", "cases"],
   "properties": {
-    "schemaVersion": { "const": 1 },
+    "schemaVersion": { "const": 2 },
     "wireProtocolVersion": {
       "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/protocolVersion"
+    },
+    "fixtureRoots": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(?!.*\\/\\.\\.?($|\\/))Contract/v2/Fixtures/(valid|invalid)(?:/[^/]+)*$"
+      }
     },
     "methods": {
       "type": "array",
@@ -32,7 +41,7 @@
         "required": ["name", "fixture", "schema", "expectation"],
         "properties": {
           "name": { "type": "string", "minLength": 1 },
-        "fixture": { "type": "string", "pattern": "^Contract/v2/Fixtures/(valid|invalid)/.+\\.json$" },
+          "fixture": { "type": "string", "pattern": "^Contract/v2/Fixtures/(valid|invalid)/.+\\.json$" },
           "schema": { "type": "string", "format": "uri-reference" },
           "expectation": { "enum": ["valid", "invalid"] },
           "semanticRule": { "enum": ["ascendingProtocolRange", "derivedVisibility"] },

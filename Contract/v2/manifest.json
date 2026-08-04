@@ -1,6 +1,10 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "wireProtocolVersion": { "major": 2, "minor": 0 },
+  "fixtureRoots": [
+    "Contract/v2/Fixtures/valid",
+    "Contract/v2/Fixtures/invalid"
+  ],
   "methods": [
     {
       "name": "handshake",

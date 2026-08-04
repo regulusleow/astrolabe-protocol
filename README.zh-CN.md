@@ -70,6 +70,9 @@ swift build -c release
 校验流程会编译全部 Draft 2020-12 Schema，检查有效和无效 Fixture，执行 JSON Schema 无法表达的
 语义规则，并验证 Swift DTO 对相同 Payload 的接受和拒绝行为保持一致。
 
+`Contract/v2/manifest.json` 通过 `fixtureRoots` 声明递归 Fixture 根目录。根目录下的每个 JSON
+Fixture 都必须在 `cases` 中且仅有一条注册记录。
+
 ## 许可证
 
 Astrolabe Protocol 使用 [Apache License 2.0](LICENSE) 许可。
