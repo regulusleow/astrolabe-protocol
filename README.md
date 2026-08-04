@@ -7,14 +7,15 @@ Astrolabe Host and platform Runtime SDKs.
 
 ## Contents
 
-- Swift DTOs and typed protocol models in the `AstrolabeProtocol` product.
+- The normative, versioned wire contract under `Contract/`.
+- Equal Swift and Kotlin implementations under `Implementations/`.
 - Request and response envelopes, errors, version negotiation, and frame
   codecs.
-- Versioned JSON Schemas under `Schemas/`.
-- Valid and invalid cross-language examples under `Fixtures/`.
+- Versioned JSON Schemas and cross-language Fixtures under each Contract version.
 - The Wire Protocol 2.0 specification in
-  [PROTOCOL-2.0.md](PROTOCOL-2.0.md).
-- Archived Wire Protocol 1.0 documentation in [PROTOCOL.md](PROTOCOL.md).
+  [Contract/v2/PROTOCOL.md](Contract/v2/PROTOCOL.md).
+- Archived Wire Protocol 1.0 documentation in
+  [Contract/v1/PROTOCOL.md](Contract/v1/PROTOCOL.md).
 
 UIKit, Android View, transport listeners, device discovery, screenshots, CLI
 commands, and MCP tools are outside this repository.
@@ -44,6 +45,18 @@ followed by a UTF-8 JSON object. The current Wire Protocol version is `2.0`.
 Swift types are one implementation of the contract. Other implementations use
 the specification, Schemas, Fixtures, and documented wire behavior as their
 compatibility source of truth.
+
+## Repository Layout
+
+```text
+Contract/          Normative protocol documents, Schemas, and Fixtures
+Implementations/   Equal Swift and Kotlin protocol implementations
+Tooling/           Contract validation, release automation, and tests
+```
+
+Root SwiftPM, Gradle, and npm manifests are ecosystem entrypoints. They map to
+the implementation and Tooling directories without making one language the
+repository's primary implementation.
 
 ## Development
 

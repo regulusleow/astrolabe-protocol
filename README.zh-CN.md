@@ -6,12 +6,12 @@ Astrolabe Protocol 定义 Astrolabe Host 与各平台 Runtime SDK 共享的平�
 
 ## 内容
 
-- `AstrolabeProtocol` Product 中的 Swift DTO 和强类型协议模型。
+- `Contract/` 下版本化的规范 Wire Contract。
+- `Implementations/` 下地位对等的 Swift 与 Kotlin 实现。
 - 请求与响应封装、错误、版本协商和帧编解码器。
-- `Schemas/` 下带版本的 JSON Schema。
-- `Fixtures/` 下用于跨语言验证的有效和无效示例。
-- [PROTOCOL-2.0.md](PROTOCOL-2.0.md) 中的 Wire Protocol 2.0 规范。
-- [PROTOCOL.md](PROTOCOL.md) 中归档的 Wire Protocol 1.0 文档。
+- 每个 Contract 版本下的 JSON Schema 与跨语言 Fixture。
+- [Contract/v2/PROTOCOL.md](Contract/v2/PROTOCOL.md) 中的 Wire Protocol 2.0 规范。
+- [Contract/v1/PROTOCOL.md](Contract/v1/PROTOCOL.md) 中归档的 Wire Protocol 1.0 文档。
 
 UIKit、Android View、Transport Listener、设备发现、截图、CLI 命令和 MCP Tools 均不属于本仓库。
 
@@ -39,6 +39,17 @@ Wire Protocol 版本为 `2.0`。
 
 Swift 类型只是该协议的一种实现。其他语言的实现应以规范、Schema、Fixture 和文档约定的 Wire
 行为作为兼容性事实源。
+
+## 仓库目录
+
+```text
+Contract/          规范协议文档、Schema 和 Fixture
+Implementations/   地位对等的 Swift 与 Kotlin 协议实现
+Tooling/           Contract 校验、发布自动化和测试
+```
+
+根目录的 SwiftPM、Gradle 和 npm 清单只是各生态的标准入口，通过显式路径映射到实现与 Tooling，
+不表示任一语言是仓库的主实现。
 
 ## 开发
 

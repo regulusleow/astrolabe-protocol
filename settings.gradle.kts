@@ -14,3 +14,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "astrolabe-protocol"
 include(":AstrolabeProtocolKotlin")
+project(":AstrolabeProtocolKotlin").projectDir = file("Implementations/Kotlin")

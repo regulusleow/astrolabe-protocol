@@ -4,12 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:schema": "node scripts/validate-contract.mjs",
+    "test:schema": "node Tooling/ContractValidation/validate-contract.mjs",
     "test:swift-contract": "swift test --filter ProtocolFixtureTests",
-    "version:check": "node scripts/version-sync.mjs --check",
-    "version:set": "node scripts/version-sync.mjs --set",
-    "release:prepare": "node scripts/release-prepare.mjs",
-    "test": "npm run version:check && npm run test:schema && npm run test:swift-contract && node --test test/*.test.mjs"
+    "version:check": "node Tooling/Release/version-sync.mjs --check",
+    "version:set": "node Tooling/Release/version-sync.mjs --set",
+    "release:prepare": "node Tooling/Release/release-prepare.mjs",
+    "test": "npm run version:check && npm run test:schema && npm run test:swift-contract && node --test Tooling/Tests/*.test.mjs"
   },
   "devDependencies": {
     "ajv": "8.20.0",
