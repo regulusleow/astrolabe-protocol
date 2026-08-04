@@ -58,6 +58,13 @@ Root SwiftPM, Gradle, and npm manifests are ecosystem entrypoints. They map to
 the implementation and Tooling directories without making one language the
 repository's primary implementation.
 
+Both language implementations use the same conceptual domains: `Core`,
+`Attributes`, `Framing`, `Messaging`, `Negotiation`, `Inspection`, and
+`Patching`. Swift uses nested `Application`, `Hierarchy`, and `NodeDetail`
+directories inside Inspection; Kotlin keeps the flat public package
+`dev.astrolabe.protocol` and does not manufacture package boundaries for
+physical directory symmetry.
+
 ## Development
 
 Install the contract validator and run all checks:

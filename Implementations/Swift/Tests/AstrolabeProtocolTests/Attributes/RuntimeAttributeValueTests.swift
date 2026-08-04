@@ -1,15 +1,14 @@
 //
-//  RuntimeModelTests.swift
+//  RuntimeAttributeValueTests.swift
 //  astrolabe-protocol
 //
 //  Created by 轩辕十四 on 2026/7/16.
 //
 
 import AstrolabeProtocol
-import Foundation
 import XCTest
 
-final class RuntimeModelTests: XCTestCase {
+final class RuntimeAttributeValueTests: XCTestCase {
     func testTypedAttributeValuesRoundTrip() throws {
         let values: [RuntimeAttributeValue] = [
             .null,
@@ -40,29 +39,5 @@ final class RuntimeModelTests: XCTestCase {
                 value
             )
         }
-    }
-
-    func testProtocolRangeRejectsDescendingAndCrossMajorRanges() {
-        XCTAssertThrowsError(
-            try RuntimeProtocolRange(
-                minimum: RuntimeProtocolVersion(major: 2, minor: 1),
-                maximum: RuntimeProtocolVersion(major: 2, minor: 0)
-            )
-        )
-        XCTAssertThrowsError(
-            try RuntimeProtocolRange(
-                minimum: RuntimeProtocolVersion(major: 1, minor: 9),
-                maximum: RuntimeProtocolVersion(major: 2, minor: 0)
-            )
-        )
-    }
-
-    func testOpaqueIdentifiersEncodeAsStrings() throws {
-        let identifier = try RuntimeOpaqueIdentifier(rawValue: "node:label:1")
-        let payload = try RuntimeMessageCodec().encode(
-            RuntimeJSONObject(values: ["nodeID": .string(identifier.rawValue)])
-        )
-
-        XCTAssertTrue(String(decoding: payload, as: UTF8.self).contains(#""node:label:1""#))
     }
 }

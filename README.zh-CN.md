@@ -51,6 +51,11 @@ Tooling/           Contract 校验、发布自动化和测试
 根目录的 SwiftPM、Gradle 和 npm 清单只是各生态的标准入口，通过显式路径映射到实现与 Tooling，
 不表示任一语言是仓库的主实现。
 
+双端实现使用相同的概念分域：`Core`、`Attributes`、`Framing`、`Messaging`、`Negotiation`、
+`Inspection` 和 `Patching`。Swift 在 Inspection 内继续按 `Application`、`Hierarchy` 和
+`NodeDetail` 建立子目录；Kotlin 保持公开 package `dev.astrolabe.protocol` 扁平，不为追求物理目录
+对称而制造新的 package 边界。
+
 ## 开发
 
 安装协议校验器并运行全部检查：
