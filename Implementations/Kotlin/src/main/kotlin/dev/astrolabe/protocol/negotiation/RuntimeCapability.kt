@@ -35,6 +35,8 @@ public value class RuntimeCapability(
         public val attributePatching: RuntimeCapability = RuntimeCapability("attributePatching")
         /** Runtime supports request cancellation. */
         public val requestCancellation: RuntimeCapability = RuntimeCapability("requestCancellation")
+        /** Runtime can report directed cross-tree node relations. */
+        public val uiGraphRelations: RuntimeCapability = RuntimeCapability("uiGraphRelations")
     }
 }
 

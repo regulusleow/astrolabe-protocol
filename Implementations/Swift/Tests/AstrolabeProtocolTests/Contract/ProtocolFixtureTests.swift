@@ -112,6 +112,8 @@ final class ProtocolFixtureTests: XCTestCase {
             return try wrap(RuntimeExtensionMap.self, data, codec)
         case "visibility":
             return try wrap(RuntimeNodeVisibility.self, data, codec)
+        case "nodeRelation":
+            return try wrap(RuntimeNodeRelation.self, data, codec)
         case "response.schema.json":
             return try wrap(RuntimeResponse<RuntimeJSONObject>.self, data, codec)
         default:

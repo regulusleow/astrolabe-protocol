@@ -103,7 +103,7 @@ class RuntimeMessageCodecTest {
     @Test
     fun `codec decodes every valid request and response fixture`() {
         validFixtureNames()
-            .filterNot { it == "vector-attribute-value.json" }
+            .filterNot { it in setOf("node-relation.json", "vector-attribute-value.json") }
             .forEach { name ->
                 val source = fixture("v2/Fixtures/valid/$name")
                 val document = codec.decodeDocument(source)

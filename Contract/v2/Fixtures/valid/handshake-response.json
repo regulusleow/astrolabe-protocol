@@ -18,6 +18,7 @@
       "attributePatchDiscovery",
       "attributePatching",
       "requestCancellation",
+      "uiGraphRelations",
       "vendor.experimentalInspection"
     ]
   }

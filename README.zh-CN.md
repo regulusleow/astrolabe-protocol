@@ -40,6 +40,12 @@ Wire Protocol 版本为 `2.0`。
 Swift 类型只是该协议的一种实现。其他语言的实现应以规范、Schema、Fixture 和文档约定的 Wire
 行为作为兼容性事实源。
 
+## UI Graph 关系
+
+声明 `uiGraphRelations` capability 的 Runtime 可以在 hierarchy snapshot 中返回可选的
+`relations` 数组。每条有向关系使用开放的 namespaced type 以及源、目标 node ID。层级父子边仍由
+权威树承载，不在该数组中重复存储。
+
 ## 仓库目录
 
 ```text

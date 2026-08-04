@@ -268,6 +268,9 @@ public struct RuntimeHierarchySnapshotPayload: Codable, Equatable, Sendable, Run
     /// Ordered hierarchy roots.
     public let roots: [RuntimeNode]
 
+    /// Directed cross-tree relations captured with this hierarchy.
+    public let relations: [RuntimeNodeRelation]?
+
     /// Optional namespaced snapshot facts.
     public let extensions: RuntimeExtensionMap?
 
@@ -279,6 +282,7 @@ public struct RuntimeHierarchySnapshotPayload: Codable, Equatable, Sendable, Run
         display: RuntimeDisplayInfo,
         viewport: RuntimeCoordinateRect,
         roots: [RuntimeNode],
+        relations: [RuntimeNodeRelation]? = nil,
         extensions: RuntimeExtensionMap? = nil
     ) {
         self.snapshotID = snapshotID
@@ -288,6 +292,7 @@ public struct RuntimeHierarchySnapshotPayload: Codable, Equatable, Sendable, Run
         self.display = display
         self.viewport = viewport
         self.roots = roots
+        self.relations = relations
         self.extensions = extensions
     }
 

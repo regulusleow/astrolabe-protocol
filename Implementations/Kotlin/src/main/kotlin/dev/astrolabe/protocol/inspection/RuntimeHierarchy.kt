@@ -186,6 +186,8 @@ public data class RuntimeHierarchySnapshotPayload(
     public val viewport: RuntimeCoordinateRect,
     /** Ordered hierarchy roots. */
     public val roots: List<RuntimeNode>,
+    /** Directed cross-tree relations captured with this hierarchy. */
+    public val relations: List<RuntimeNodeRelation>? = null,
     /** Optional namespaced snapshot facts. */
     public val extensions: RuntimeExtensionMap? = null
 ) {

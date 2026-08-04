@@ -92,6 +92,14 @@
           }
         ]
       }
+    ],
+    "relations": [
+      {
+        "type": "vendor.graph.related",
+        "sourceNodeID": "node:window:0",
+        "targetNodeID": "node:label:1",
+        "extensions": {}
+      }
     ]
   }
 }

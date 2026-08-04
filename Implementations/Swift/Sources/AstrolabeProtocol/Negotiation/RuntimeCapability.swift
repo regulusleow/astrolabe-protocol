@@ -32,6 +32,7 @@ public struct RuntimeCapability: Codable, Equatable, Hashable, Sendable {
     public static let attributePatchDiscovery = RuntimeCapability(uncheckedRawValue: "attributePatchDiscovery")
     public static let attributePatching = RuntimeCapability(uncheckedRawValue: "attributePatching")
     public static let requestCancellation = RuntimeCapability(uncheckedRawValue: "requestCancellation")
+    public static let uiGraphRelations = RuntimeCapability(uncheckedRawValue: "uiGraphRelations")
 
     private init(uncheckedRawValue: String) {
         rawValue = uncheckedRawValue

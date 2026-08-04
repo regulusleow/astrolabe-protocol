@@ -32,6 +32,7 @@ class ProtocolFixtureConformanceTest {
             "hierarchy-snapshot-response.json" to { decodeResponse(RuntimeHierarchySnapshotPayload.contract, it) },
             "list-attribute-patches-request.json" to { decodeRequest(RuntimeListAttributePatchesParameters.contract, it) },
             "list-attribute-patches-response.json" to { decodeResponse(RuntimeAttributePatchListPayload.contract, it) },
+            "node-relation.json" to { codec.decodeValue(it, RuntimeNodeRelation.serializer()) },
             "node-detail-failure-response.json" to { codec.decodeResponse(it) },
             "node-detail-request.json" to { decodeRequest(RuntimeNodeDetailParameters.contract, it) },
             "node-detail-response.json" to { decodeResponse(RuntimeNodeDetailPayload.contract, it) },
@@ -78,6 +79,9 @@ class ProtocolFixtureConformanceTest {
             },
             "request-missing-request-id.json" to { source -> codec.decodeRequest(source) },
             "request-uses-v1.json" to { source -> codec.decodeRequest(source) },
+            "relation-type-not-namespaced.json" to { source ->
+                codec.decodeValue(source, RuntimeNodeRelation.serializer())
+            },
             "success-response-contains-error.json" to { source -> codec.decodeResponse(source) },
             "unknown-response-status.json" to { source -> codec.decodeResponse(source) },
             "unsafe-integer-attribute-value.json" to { source ->

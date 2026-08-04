@@ -46,6 +46,13 @@ Swift types are one implementation of the contract. Other implementations use
 the specification, Schemas, Fixtures, and documented wire behavior as their
 compatibility source of truth.
 
+## UI Graph Relations
+
+Runtimes advertising `uiGraphRelations` may include an optional `relations`
+array in hierarchy snapshots. Each directed relation uses an open namespaced
+type plus source and target node IDs. Hierarchy parent/child edges remain in the
+authoritative trees and are not duplicated in this array.
+
 ## Repository Layout
 
 ```text

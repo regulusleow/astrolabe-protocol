@@ -222,6 +222,24 @@
         }
       }
     },
+    "nodeRelation": {
+      "type": "object",
+      "required": ["type", "sourceNodeID", "targetNodeID", "extensions"],
+      "properties": {
+        "type": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/namespacedIdentifier"
+        },
+        "sourceNodeID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        },
+        "targetNodeID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        },
+        "extensions": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/extensionMap"
+        }
+      }
+    },
     "hierarchySnapshotPayload": {
       "type": "object",
       "required": [
@@ -254,6 +272,10 @@
         "roots": {
           "type": "array",
           "items": { "$ref": "#/$defs/node" }
+        },
+        "relations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nodeRelation" }
         },
         "extensions": {
           "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/extensionMap"

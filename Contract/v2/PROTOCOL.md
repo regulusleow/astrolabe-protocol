@@ -201,6 +201,19 @@ Visibility keeps independent causes instead of overloading one Boolean:
 ancestor, has effective opacity greater than `0.01`, intersects the viewport,
 and is not fully clipped by an ancestor.
 
+### 8.3 UI graph relations
+
+The `uiGraphRelations` capability advertises that hierarchy snapshots may
+contain an optional `relations` member. Each directed relation contains an open
+namespaced `type`, a `sourceNodeID`, a `targetNodeID`, and namespaced
+`extensions`. Relation types remain producer-owned vocabulary rather than a
+closed Protocol enum.
+
+The Runtime reports observed relations between captured nodes. It does not
+duplicate hierarchy parent/child edges in `relations`. When either the
+`uiGraphRelations` capability or the optional member is absent, the Host must
+not infer that any cross-tree relation exists.
+
 ## 9. Node details and attributes
 
 Node detail is grouped into sections. Section categories and attribute
