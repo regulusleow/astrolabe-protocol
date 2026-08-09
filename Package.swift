@@ -15,10 +15,14 @@ let package = Package(
         )
     ],
     targets: [
-        .target(name: "AstrolabeProtocol"),
+        .target(
+            name: "AstrolabeProtocol",
+            path: "Implementations/Swift/Sources/AstrolabeProtocol"
+        ),
         .testTarget(
             name: "AstrolabeProtocolTests",
-            dependencies: ["AstrolabeProtocol"]
+            dependencies: ["AstrolabeProtocol"],
+            path: "Implementations/Swift/Tests/AstrolabeProtocolTests"
         )
     ]
 )

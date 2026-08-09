@@ -7,14 +7,15 @@ Astrolabe Host and platform Runtime SDKs.
 
 ## Contents
 
-- Swift DTOs and typed protocol models in the `AstrolabeProtocol` product.
+- The normative, versioned wire contract under `Contract/`.
+- Equal Swift and Kotlin implementations under `Implementations/`.
 - Request and response envelopes, errors, version negotiation, and frame
   codecs.
-- Versioned JSON Schemas under `Schemas/`.
-- Valid and invalid cross-language examples under `Fixtures/`.
+- Versioned JSON Schemas and cross-language Fixtures under each Contract version.
 - The Wire Protocol 2.0 specification in
-  [PROTOCOL-2.0.md](PROTOCOL-2.0.md).
-- Archived Wire Protocol 1.0 documentation in [PROTOCOL.md](PROTOCOL.md).
+  [Contract/v2/PROTOCOL.md](Contract/v2/PROTOCOL.md).
+- Archived Wire Protocol 1.0 documentation in
+  [Contract/v1/PROTOCOL.md](Contract/v1/PROTOCOL.md).
 
 UIKit, Android View, transport listeners, device discovery, screenshots, CLI
 commands, and MCP tools are outside this repository.
@@ -26,7 +27,7 @@ Add the package through Swift Package Manager:
 ```swift
 .package(
     url: "https://github.com/regulusleow/astrolabe-protocol.git",
-    exact: "2.0.0"
+    exact: "2.1.0"
 )
 ```
 
@@ -45,6 +46,32 @@ Swift types are one implementation of the contract. Other implementations use
 the specification, Schemas, Fixtures, and documented wire behavior as their
 compatibility source of truth.
 
+## UI Graph Relations
+
+Runtimes advertising `uiGraphRelations` may include an optional `relations`
+array in hierarchy snapshots. Each directed relation uses an open namespaced
+type plus source and target node IDs. Hierarchy parent/child edges remain in the
+authoritative trees and are not duplicated in this array.
+
+## Repository Layout
+
+```text
+Contract/          Normative protocol documents, Schemas, and Fixtures
+Implementations/   Equal Swift and Kotlin protocol implementations
+Tooling/           Contract validation, release automation, and tests
+```
+
+Root SwiftPM, Gradle, and npm manifests are ecosystem entrypoints. They map to
+the implementation and Tooling directories without making one language the
+repository's primary implementation.
+
+Both language implementations use the same conceptual domains: `Core`,
+`Attributes`, `Framing`, `Messaging`, `Negotiation`, `Inspection`, and
+`Patching`. Swift uses nested `Application`, `Hierarchy`, and `NodeDetail`
+directories inside Inspection; Kotlin keeps the flat public package
+`dev.astrolabe.protocol` and does not manufacture package boundaries for
+physical directory symmetry.
+
 ## Development
 
 Install the contract validator and run all checks:
@@ -59,6 +86,10 @@ swift build -c release
 Validation compiles every Draft 2020-12 Schema, checks valid and invalid
 Fixtures, applies semantic rules that JSON Schema cannot express, and verifies
 that the Swift DTOs accept and reject the same payloads.
+
+`Contract/v2/manifest.json` declares recursive Fixture roots through
+`fixtureRoots`. Every JSON Fixture below those roots must have exactly one
+registration in `cases`.
 
 ## License
 

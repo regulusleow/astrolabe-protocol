@@ -8,3 +8,4 @@ node_modules/
 **/build/
 *.xcuserstate
 .DS_Store
+docs/superpowers

@@ -1,0 +1,6 @@
+{
+  "type": "backingLayer",
+  "sourceNodeID": "node:view:1",
+  "targetNodeID": "node:layer:1",
+  "extensions": { "vendor.graph.confidence": 1 }
+}

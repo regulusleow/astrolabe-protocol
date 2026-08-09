@@ -6,12 +6,12 @@ Astrolabe Protocol 定义 Astrolabe Host 与各平台 Runtime SDK 共享的平�
 
 ## 内容
 
-- `AstrolabeProtocol` Product 中的 Swift DTO 和强类型协议模型。
+- `Contract/` 下版本化的规范 Wire Contract。
+- `Implementations/` 下地位对等的 Swift 与 Kotlin 实现。
 - 请求与响应封装、错误、版本协商和帧编解码器。
-- `Schemas/` 下带版本的 JSON Schema。
-- `Fixtures/` 下用于跨语言验证的有效和无效示例。
-- [PROTOCOL-2.0.md](PROTOCOL-2.0.md) 中的 Wire Protocol 2.0 规范。
-- [PROTOCOL.md](PROTOCOL.md) 中归档的 Wire Protocol 1.0 文档。
+- 每个 Contract 版本下的 JSON Schema 与跨语言 Fixture。
+- [Contract/v2/PROTOCOL.md](Contract/v2/PROTOCOL.md) 中的 Wire Protocol 2.0 规范。
+- [Contract/v1/PROTOCOL.md](Contract/v1/PROTOCOL.md) 中归档的 Wire Protocol 1.0 文档。
 
 UIKit、Android View、Transport Listener、设备发现、截图、CLI 命令和 MCP Tools 均不属于本仓库。
 
@@ -22,7 +22,7 @@ UIKit、Android View、Transport Listener、设备发现、截图、CLI 命令�
 ```swift
 .package(
     url: "https://github.com/regulusleow/astrolabe-protocol.git",
-    exact: "2.0.0"
+    exact: "2.1.0"
 )
 ```
 
@@ -40,6 +40,28 @@ Wire Protocol 版本为 `2.0`。
 Swift 类型只是该协议的一种实现。其他语言的实现应以规范、Schema、Fixture 和文档约定的 Wire
 行为作为兼容性事实源。
 
+## UI Graph 关系
+
+声明 `uiGraphRelations` capability 的 Runtime 可以在 hierarchy snapshot 中返回可选的
+`relations` 数组。每条有向关系使用开放的 namespaced type 以及源、目标 node ID。层级父子边仍由
+权威树承载，不在该数组中重复存储。
+
+## 仓库目录
+
+```text
+Contract/          规范协议文档、Schema 和 Fixture
+Implementations/   地位对等的 Swift 与 Kotlin 协议实现
+Tooling/           Contract 校验、发布自动化和测试
+```
+
+根目录的 SwiftPM、Gradle 和 npm 清单只是各生态的标准入口，通过显式路径映射到实现与 Tooling，
+不表示任一语言是仓库的主实现。
+
+双端实现使用相同的概念分域：`Core`、`Attributes`、`Framing`、`Messaging`、`Negotiation`、
+`Inspection` 和 `Patching`。Swift 在 Inspection 内继续按 `Application`、`Hierarchy` 和
+`NodeDetail` 建立子目录；Kotlin 保持公开 package `dev.astrolabe.protocol` 扁平，不为追求物理目录
+对称而制造新的 package 边界。
+
 ## 开发
 
 安装协议校验器并运行全部检查：
@@ -53,6 +75,9 @@ swift build -c release
 
 校验流程会编译全部 Draft 2020-12 Schema，检查有效和无效 Fixture，执行 JSON Schema 无法表达的
 语义规则，并验证 Swift DTO 对相同 Payload 的接受和拒绝行为保持一致。
+
+`Contract/v2/manifest.json` 通过 `fixtureRoots` 声明递归 Fixture 根目录。根目录下的每个 JSON
+Fixture 都必须在 `cases` 中且仅有一条注册记录。
 
 ## 许可证
 

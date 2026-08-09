@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 2,
+  "wireProtocolVersion": { "major": 2, "minor": 0 },
+  "fixtureRoots": [
+    "Contract/v2/Fixtures/valid",
+    "Contract/v2/Fixtures/invalid"
+  ],
+  "methods": [
+    {
+      "name": "handshake",
+      "capability": null,
+      "requestSchema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/handshakeRequest",
+      "successResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/handshakeSuccessResponse",
+      "failureResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/handshakeFailureResponse"
+    },
+    {
+      "name": "applicationInfo",
+      "capability": "applicationInfo",
+      "requestSchema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/applicationInfoRequest",
+      "successResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/applicationInfoSuccessResponse",
+      "failureResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/applicationInfoFailureResponse"
+    },
+    {
+      "name": "hierarchySnapshot",
+      "capability": "hierarchySnapshot",
+      "requestSchema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/hierarchySnapshotRequest",
+      "successResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/hierarchySnapshotSuccessResponse",
+      "failureResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/hierarchySnapshotFailureResponse"
+    },
+    {
+      "name": "nodeDetail",
+      "capability": "nodeDetail",
+      "requestSchema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/nodeDetailRequest",
+      "successResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/nodeDetailSuccessResponse",
+      "failureResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/nodeDetailFailureResponse"
+    },
+    {
+      "name": "patchableAttributes",
+      "capability": "attributePatchDiscovery",
+      "requestSchema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/patchableAttributesRequest",
+      "successResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/patchableAttributesSuccessResponse",
+      "failureResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/patchableAttributesFailureResponse"
+    },
+    {
+      "name": "applyAttributePatch",
+      "capability": "attributePatching",
+      "requestSchema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/applyAttributePatchRequest",
+      "successResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/applyAttributePatchSuccessResponse",
+      "failureResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/applyAttributePatchFailureResponse"
+    },
+    {
+      "name": "listAttributePatches",
+      "capability": "attributePatching",
+      "requestSchema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/listAttributePatchesRequest",
+      "successResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/listAttributePatchesSuccessResponse",
+      "failureResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/listAttributePatchesFailureResponse"
+    },
+    {
+      "name": "revertAttributePatch",
+      "capability": "attributePatching",
+      "requestSchema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/revertAttributePatchRequest",
+      "successResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/revertAttributePatchSuccessResponse",
+      "failureResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/revertAttributePatchFailureResponse"
+    },
+    {
+      "name": "clearAttributePatches",
+      "capability": "attributePatching",
+      "requestSchema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/clearAttributePatchesRequest",
+      "successResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/clearAttributePatchesSuccessResponse",
+      "failureResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/clearAttributePatchesFailureResponse"
+    },
+    {
+      "name": "cancelRequest",
+      "capability": "requestCancellation",
+      "requestSchema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/cancelRequestRequest",
+      "successResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/cancelRequestSuccessResponse",
+      "failureResponseSchema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/cancelRequestFailureResponse"
+    }
+  ],
+  "cases": [
+    { "name": "handshake request", "fixture": "Contract/v2/Fixtures/valid/handshake-request.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/handshakeRequest", "expectation": "valid" },
+    { "name": "handshake response", "fixture": "Contract/v2/Fixtures/valid/handshake-response.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/handshakeSuccessResponse", "expectation": "valid" },
+    { "name": "application info request", "fixture": "Contract/v2/Fixtures/valid/application-info-request.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/applicationInfoRequest", "expectation": "valid" },
+    { "name": "application info response", "fixture": "Contract/v2/Fixtures/valid/application-info-response.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/applicationInfoSuccessResponse", "expectation": "valid" },
+    { "name": "hierarchy request", "fixture": "Contract/v2/Fixtures/valid/hierarchy-snapshot-request.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/hierarchySnapshotRequest", "expectation": "valid" },
+    { "name": "hierarchy response", "fixture": "Contract/v2/Fixtures/valid/hierarchy-snapshot-response.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/hierarchySnapshotSuccessResponse", "expectation": "valid" },
+    { "name": "node detail request", "fixture": "Contract/v2/Fixtures/valid/node-detail-request.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/nodeDetailRequest", "expectation": "valid" },
+    { "name": "node detail response", "fixture": "Contract/v2/Fixtures/valid/node-detail-response.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/nodeDetailSuccessResponse", "expectation": "valid" },
+    { "name": "patch catalog request", "fixture": "Contract/v2/Fixtures/valid/patchable-attributes-request.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/patchableAttributesRequest", "expectation": "valid" },
+    { "name": "patch catalog response", "fixture": "Contract/v2/Fixtures/valid/patchable-attributes-response.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/patchableAttributesSuccessResponse", "expectation": "valid" },
+    { "name": "apply patch request", "fixture": "Contract/v2/Fixtures/valid/apply-attribute-patch-request.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/applyAttributePatchRequest", "expectation": "valid" },
+    { "name": "apply patch response", "fixture": "Contract/v2/Fixtures/valid/apply-attribute-patch-response.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/applyAttributePatchSuccessResponse", "expectation": "valid" },
+    { "name": "list patches request", "fixture": "Contract/v2/Fixtures/valid/list-attribute-patches-request.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/listAttributePatchesRequest", "expectation": "valid" },
+    { "name": "list patches response", "fixture": "Contract/v2/Fixtures/valid/list-attribute-patches-response.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/listAttributePatchesSuccessResponse", "expectation": "valid" },
+    { "name": "revert patch request", "fixture": "Contract/v2/Fixtures/valid/revert-attribute-patch-request.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/revertAttributePatchRequest", "expectation": "valid" },
+    { "name": "revert patch response", "fixture": "Contract/v2/Fixtures/valid/revert-attribute-patch-response.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/revertAttributePatchSuccessResponse", "expectation": "valid" },
+    { "name": "clear patches request", "fixture": "Contract/v2/Fixtures/valid/clear-attribute-patches-request.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/clearAttributePatchesRequest", "expectation": "valid" },
+    { "name": "clear patches response", "fixture": "Contract/v2/Fixtures/valid/clear-attribute-patches-response.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/clearAttributePatchesSuccessResponse", "expectation": "valid" },
+    { "name": "cancel request", "fixture": "Contract/v2/Fixtures/valid/cancel-request.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/cancelRequestRequest", "expectation": "valid" },
+    { "name": "cancel response", "fixture": "Contract/v2/Fixtures/valid/cancel-response.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/cancelRequestSuccessResponse", "expectation": "valid" },
+    { "name": "failure response", "fixture": "Contract/v2/Fixtures/valid/node-detail-failure-response.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/nodeDetailFailureResponse", "expectation": "valid" },
+    { "name": "unknown method request envelope", "fixture": "Contract/v2/Fixtures/valid/unknown-method-request.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/unknownMethodRequest", "expectation": "valid" },
+    { "name": "unknown method failure envelope", "fixture": "Contract/v2/Fixtures/valid/unknown-method-failure-response.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/unknownMethodFailureResponse", "expectation": "valid" },
+    { "name": "signed vector attribute value", "fixture": "Contract/v2/Fixtures/valid/vector-attribute-value.json", "schema": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/attributeValue", "expectation": "valid" },
+    { "name": "namespaced node relation", "fixture": "Contract/v2/Fixtures/valid/node-relation.json", "schema": "https://astrolabe.dev/schemas/v2/inspection.schema.json#/$defs/nodeRelation", "expectation": "valid" },
+    { "name": "missing request id", "fixture": "Contract/v2/Fixtures/invalid/request-missing-request-id.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/applicationInfoRequest", "expectation": "invalid", "reason": "requestID is required" },
+    { "name": "v1 message on v2 contract", "fixture": "Contract/v2/Fixtures/invalid/request-uses-v1.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/applicationInfoRequest", "expectation": "invalid", "reason": "V2 does not accept V1 aliases or envelopes" },
+    { "name": "numeric node id", "fixture": "Contract/v2/Fixtures/invalid/node-id-is-number.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/nodeDetailRequest", "expectation": "invalid", "reason": "node IDs are opaque strings" },
+    { "name": "success with error", "fixture": "Contract/v2/Fixtures/invalid/success-response-contains-error.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/cancelRequestSuccessResponse", "expectation": "invalid", "reason": "success responses cannot contain error" },
+    { "name": "failure with payload", "fixture": "Contract/v2/Fixtures/invalid/failure-response-contains-payload.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json#/$defs/nodeDetailFailureResponse", "expectation": "invalid", "reason": "failure responses cannot contain payload" },
+    { "name": "unnamespaced attribute", "fixture": "Contract/v2/Fixtures/invalid/attribute-identifier-not-namespaced.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/applyAttributePatchRequest", "expectation": "invalid", "reason": "attribute identifiers require a namespace" },
+    { "name": "unnamespaced patch pattern", "fixture": "Contract/v2/Fixtures/invalid/patch-pattern-not-namespaced.json", "schema": "https://astrolabe.dev/schemas/v2/patching.schema.json#/$defs/patchableAttribute", "expectation": "invalid", "reason": "patch catalog patterns require a namespace" },
+    { "name": "unsafe integer", "fixture": "Contract/v2/Fixtures/invalid/unsafe-integer-attribute-value.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/applyAttributePatchRequest", "expectation": "invalid", "reason": "integer values must remain JSON safe" },
+    { "name": "coordinate without unit", "fixture": "Contract/v2/Fixtures/invalid/coordinate-rect-missing-unit.json", "schema": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/coordinateRect", "expectation": "invalid", "reason": "every coordinate declares its unit" },
+    { "name": "display size without unit", "fixture": "Contract/v2/Fixtures/invalid/display-size-missing-unit.json", "schema": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/displayInfo", "expectation": "invalid", "reason": "display dimensions declare logical or pixel units" },
+    { "name": "unnamespaced extension", "fixture": "Contract/v2/Fixtures/invalid/extension-key-not-namespaced.json", "schema": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/extensionMap", "expectation": "invalid", "reason": "extension keys require a namespace" },
+    { "name": "unknown response status", "fixture": "Contract/v2/Fixtures/invalid/unknown-response-status.json", "schema": "https://astrolabe.dev/schemas/v2/response.schema.json", "expectation": "invalid", "reason": "response status is a closed discriminator" },
+    { "name": "descending protocol range", "fixture": "Contract/v2/Fixtures/invalid/descending-protocol-range.json", "schema": "https://astrolabe.dev/schemas/v2/request.schema.json#/$defs/handshakeRequest", "expectation": "invalid", "semanticRule": "ascendingProtocolRange", "reason": "minimum protocol version cannot exceed maximum" },
+    { "name": "inconsistent visibility", "fixture": "Contract/v2/Fixtures/invalid/inconsistent-visibility.json", "schema": "https://astrolabe.dev/schemas/v2/inspection.schema.json#/$defs/visibility", "expectation": "invalid", "semanticRule": "derivedVisibility", "reason": "a hidden node cannot be onscreen" },
+    { "name": "relation type without namespace", "fixture": "Contract/v2/Fixtures/invalid/relation-type-not-namespaced.json", "schema": "https://astrolabe.dev/schemas/v2/inspection.schema.json#/$defs/nodeRelation", "expectation": "invalid", "reason": "relation types require a namespace" }
+  ]
+}
