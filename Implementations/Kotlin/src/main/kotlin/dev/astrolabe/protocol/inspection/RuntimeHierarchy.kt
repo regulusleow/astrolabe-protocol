@@ -160,12 +160,17 @@ public data class RuntimeNode(
     }
 }
 
-/** Empty parameters for capturing a hierarchy snapshot. */
+/** Parameters for capturing a hierarchy snapshot. */
 @Serializable
-public data object RuntimeHierarchySnapshotParameters {
-    /** Typed request contract for the hierarchy-snapshot method. */
-    public val contract: RuntimeMethodContract<RuntimeHierarchySnapshotParameters> by lazy {
-        RuntimeMethodContract(RuntimeMethod.hierarchySnapshot, serializer())
+public data class RuntimeHierarchySnapshotParameters(
+    /** Explicit semantic capture opt-in; omitted for the original request. */
+    public val semanticCapture: RuntimeSemanticCaptureOptions? = null
+) {
+    public companion object {
+        /** Typed request contract for the hierarchy-snapshot method. */
+        public val contract: RuntimeMethodContract<RuntimeHierarchySnapshotParameters> by lazy {
+            RuntimeMethodContract(RuntimeMethod.hierarchySnapshot, serializer())
+        }
     }
 }
 
@@ -189,7 +194,9 @@ public data class RuntimeHierarchySnapshotPayload(
     /** Directed cross-tree relations captured with this hierarchy. */
     public val relations: List<RuntimeNodeRelation>? = null,
     /** Optional namespaced snapshot facts. */
-    public val extensions: RuntimeExtensionMap? = null
+    public val extensions: RuntimeExtensionMap? = null,
+    /** Typed semantic observation for the selected window. */
+    public val semanticCapture: RuntimeSemanticCapture? = null
 ) {
     init {
         require(capturedAtUnixTime >= 0.0) { "Hierarchy capture time cannot be negative" }

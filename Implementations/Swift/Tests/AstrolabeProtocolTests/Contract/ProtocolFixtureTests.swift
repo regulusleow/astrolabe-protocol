@@ -114,6 +114,14 @@ final class ProtocolFixtureTests: XCTestCase {
             return try wrap(RuntimeNodeVisibility.self, data, codec)
         case "nodeRelation":
             return try wrap(RuntimeNodeRelation.self, data, codec)
+        case "semanticCapture":
+            return try wrap(RuntimeSemanticCapture.self, data, codec)
+        case "semanticDetailContext":
+            return try wrap(RuntimeSemanticDetailContext.self, data, codec)
+        case "nodeGeometry":
+            return try wrap(RuntimeNodeGeometry.self, data, codec)
+        case "hierarchySnapshotFailureResponse":
+            return try wrap(RuntimeResponse<RuntimeJSONObject>.self, data, codec)
         case "response.schema.json":
             return try wrap(RuntimeResponse<RuntimeJSONObject>.self, data, codec)
         default:

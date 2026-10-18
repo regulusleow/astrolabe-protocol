@@ -1,0 +1,20 @@
+{
+  "common.inspectionTargets": [
+    {
+      "windowID": "window:1",
+      "runtimeType": {
+        "name": "UIWindow",
+        "ancestors": []
+      },
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844,
+        "coordinateSpace": "local",
+        "unit": "logical"
+      },
+      "level": "bad"
+    }
+  ]
+}

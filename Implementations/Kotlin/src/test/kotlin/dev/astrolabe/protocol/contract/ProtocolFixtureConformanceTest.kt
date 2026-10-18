@@ -18,6 +18,12 @@ class ProtocolFixtureConformanceTest {
     @Test
     fun `every valid fixture has an explicit Kotlin conformance path`() {
         val cases = mapOf<String, (ByteArray) -> Unit>(
+            "semantic-capture.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
+            "semantic-detail-context.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },
+            "inspection-targets.json" to { codec.decodeValue(it, RuntimeExtensionMap.serializer()) },
+            "semantic-hierarchy-request.json" to { decodeRequest(RuntimeHierarchySnapshotParameters.contract, it) },
+            "semantic-node-detail-request.json" to { decodeRequest(RuntimeNodeDetailParameters.contract, it) },
+            "inspection-target-failure.json" to { codec.decodeResponse(it) },
             "application-info-request.json" to { decodeRequest(RuntimeApplicationInfoParameters.contract, it) },
             "application-info-response.json" to { decodeResponse(RuntimeApplicationInfoPayload.contract, it) },
             "apply-attribute-patch-request.json" to { decodeRequest(RuntimeApplyAttributePatchParameters.contract, it) },
@@ -52,6 +58,16 @@ class ProtocolFixtureConformanceTest {
     @Test
     fun `every invalid fixture has an explicit Kotlin rejection path`() {
         val cases = mapOf<String, (ByteArray) -> Unit>(
+            "semantic-text-budget.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },
+            "semantic-unicode-path.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
+            "semantic-source-not-namespaced.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
+            "semantic-duplicate-node.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
+            "semantic-parent-mismatch.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
+            "semantic-invalid-frame.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
+            "semantic-invalid-count.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
+            "semantic-long-path.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
+            "render-null-geometry.json" to { codec.decodeValue(it, RuntimeNodeGeometry.serializer()) },
+            "inspection-target-invalid-level.json" to { codec.decodeValue(it, RuntimeExtensionMap.serializer()) },
             "attribute-identifier-not-namespaced.json" to { source ->
                 decodeRequest(RuntimeApplyAttributePatchParameters.contract, source)
             },

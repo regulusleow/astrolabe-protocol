@@ -3,6 +3,315 @@
   "$id": "https://astrolabe.dev/schemas/v2/inspection.schema.json",
   "title": "Astrolabe Protocol 2.0 Inspection Types",
   "$defs": {
+    "semanticAccessibility": {
+      "allOf": [
+        { "$ref": "#/$defs/accessibility" },
+        { "type": "object", "properties": { "traits": { "type": "array", "maxItems": 2000 } } }
+      ]
+    },
+    "semanticAvailability": {
+      "enum": [
+        "complete",
+        "partial",
+        "unavailable"
+      ]
+    },
+    "semanticPath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "semanticCaptureOptions": {
+      "type": "object",
+      "properties": {
+        "windowID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        }
+      }
+    },
+    "hierarchySnapshotParameters": {
+      "type": "object",
+      "properties": {
+        "semanticCapture": {
+          "$ref": "#/$defs/semanticCaptureOptions"
+        }
+      }
+    },
+    "inspectionIssue": {
+      "type": "object",
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/namespacedIdentifier"
+        },
+        "path": {
+          "$ref": "#/$defs/semanticPath"
+        }
+      }
+    },
+    "semanticTextField": {
+      "type": "object",
+      "required": [
+        "path",
+        "attribute"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/semanticPath"
+        },
+        "attribute": {
+          "$ref": "#/$defs/attribute"
+        }
+      }
+    },
+    "semanticTextCandidate": {
+      "type": "object",
+      "required": [
+        "source",
+        "path",
+        "fields",
+        "issues"
+      ],
+      "properties": {
+        "source": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/namespacedIdentifier"
+        },
+        "path": {
+          "$ref": "#/$defs/semanticPath"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/semanticTextField"
+          },
+          "maxItems": 1500
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/inspectionIssue"
+          },
+          "maxItems": 2000
+        }
+      }
+    },
+    "semanticDetailContext": {
+      "type": "object",
+      "required": [
+        "snapshotID",
+        "capturedAtUnixTime",
+        "source",
+        "availability",
+        "issues",
+        "wasTruncated",
+        "textCandidates"
+      ],
+      "properties": {
+        "snapshotID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        },
+        "capturedAtUnixTime": {
+          "type": "number",
+          "minimum": 0
+        },
+        "source": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/namespacedIdentifier"
+        },
+        "availability": {
+          "$ref": "#/$defs/semanticAvailability"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/inspectionIssue"
+          },
+          "maxItems": 2000
+        },
+        "wasTruncated": {
+          "type": "boolean"
+        },
+        "textCandidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/semanticTextCandidate"
+          },
+          "maxItems": 10000
+        }
+      }
+    },
+    "semanticNode": {
+      "type": "object",
+      "required": [
+        "nodeID",
+        "parentID",
+        "siblingIndex",
+        "role",
+        "runtimeType",
+        "availableDetailCategories",
+        "children"
+      ],
+      "properties": {
+        "nodeID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        },
+        "parentID": {
+          "oneOf": [
+            {
+              "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "siblingIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1999
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "runtimeType": {
+          "$ref": "#/$defs/runtimeType"
+        },
+        "accessibility": {
+          "$ref": "#/$defs/semanticAccessibility"
+        },
+        "frameInScreen": {
+          "allOf": [
+            {
+              "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/coordinateRect"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "coordinateSpace": {
+                  "const": "screen"
+                },
+                "unit": {
+                  "const": "logical"
+                }
+              }
+            }
+          ]
+        },
+        "availableDetailCategories": {
+          "type": "array",
+          "items": {
+            "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/namespacedIdentifier"
+          },
+          "maxItems": 2000,
+          "uniqueItems": true
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/semanticNode"
+          },
+          "maxItems": 2000
+        }
+      }
+    },
+    "semanticCapture": {
+      "type": "object",
+      "required": [
+        "windowID",
+        "source",
+        "availability",
+        "issues",
+        "visitedNodeCount",
+        "wasTruncated",
+        "roots"
+      ],
+      "properties": {
+        "windowID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        },
+        "source": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/namespacedIdentifier"
+        },
+        "availability": {
+          "$ref": "#/$defs/semanticAvailability"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/inspectionIssue"
+          },
+          "maxItems": 2000
+        },
+        "visitedNodeCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "wasTruncated": {
+          "type": "boolean"
+        },
+        "roots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/semanticNode"
+          },
+          "maxItems": 2000
+        }
+      }
+    },
+    "inspectionWindow": {
+      "type": "object",
+      "required": [
+        "windowID",
+        "runtimeType"
+      ],
+      "properties": {
+        "windowID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        },
+        "sceneID": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
+        },
+        "runtimeType": {
+          "$ref": "#/$defs/runtimeType"
+        },
+        "bounds": {
+          "allOf": [
+            {
+              "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/coordinateRect"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "coordinateSpace": {
+                  "const": "local"
+                },
+                "unit": {
+                  "const": "logical"
+                }
+              }
+            }
+          ]
+        },
+        "level": {
+          "type": "number"
+        },
+        "exclusionReason": {
+          "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/namespacedIdentifier"
+        }
+      }
+    },
+    "inspectionTargets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/inspectionWindow"
+      },
+      "maxItems": 64
+    },
     "application": {
       "type": "object",
       "required": ["identifier", "displayName", "version", "buildVersion"],
@@ -277,6 +586,7 @@
           "type": "array",
           "items": { "$ref": "#/$defs/nodeRelation" }
         },
+        "semanticCapture": { "$ref": "#/$defs/semanticCapture" },
         "extensions": {
           "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/extensionMap"
         }
@@ -286,6 +596,7 @@
       "type": "object",
       "required": ["nodeID"],
       "properties": {
+        "snapshotID": { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier" },
         "nodeID": {
           "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
         }
@@ -320,6 +631,7 @@
       "type": "object",
       "required": ["nodeID", "sections"],
       "properties": {
+        "semanticContext": { "$ref": "#/$defs/semanticDetailContext" },
         "nodeID": {
           "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/opaqueIdentifier"
         },

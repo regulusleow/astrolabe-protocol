@@ -271,6 +271,9 @@ public struct RuntimeHierarchySnapshotPayload: Codable, Equatable, Sendable, Run
     /// Directed cross-tree relations captured with this hierarchy.
     public let relations: [RuntimeNodeRelation]?
 
+    /// Optional typed semantic observation for the explicitly selected window.
+    public let semanticCapture: RuntimeSemanticCapture?
+
     /// Optional namespaced snapshot facts.
     public let extensions: RuntimeExtensionMap?
 
@@ -283,7 +286,8 @@ public struct RuntimeHierarchySnapshotPayload: Codable, Equatable, Sendable, Run
         viewport: RuntimeCoordinateRect,
         roots: [RuntimeNode],
         relations: [RuntimeNodeRelation]? = nil,
-        extensions: RuntimeExtensionMap? = nil
+        extensions: RuntimeExtensionMap? = nil,
+        semanticCapture: RuntimeSemanticCapture? = nil
     ) {
         self.snapshotID = snapshotID
         self.capturedAtUnixTime = capturedAtUnixTime
@@ -293,6 +297,7 @@ public struct RuntimeHierarchySnapshotPayload: Codable, Equatable, Sendable, Run
         self.viewport = viewport
         self.roots = roots
         self.relations = relations
+        self.semanticCapture = semanticCapture
         self.extensions = extensions
     }
 

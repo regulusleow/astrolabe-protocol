@@ -71,6 +71,9 @@
     },
     "extensionMap": {
       "type": "object",
+      "properties": {
+        "common.inspectionTargets": { "$ref": "https://astrolabe.dev/schemas/v2/inspection.schema.json#/$defs/inspectionTargets" }
+      },
       "propertyNames": { "$ref": "#/$defs/namespacedIdentifier" }
     },
     "safeInteger": {

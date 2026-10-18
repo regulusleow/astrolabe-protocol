@@ -91,6 +91,7 @@ public struct RuntimeExtensionMap: Codable, Equatable, Sendable {
 
     public init(values: [String: RuntimeJSONValue] = [:]) throws {
         try Self.validateKeys(values.keys)
+        try validateInspectionTargetsValue(values["common.inspectionTargets"])
         self.values = values
     }
 
@@ -98,11 +99,13 @@ public struct RuntimeExtensionMap: Codable, Equatable, Sendable {
         let container = try decoder.singleValueContainer()
         let values = try container.decode([String: RuntimeJSONValue].self)
         try Self.validateKeys(values.keys)
+        try validateInspectionTargetsValue(values["common.inspectionTargets"])
         self.values = values
     }
 
     public func encode(to encoder: Encoder) throws {
         try Self.validateKeys(values.keys)
+        try validateInspectionTargetsValue(values["common.inspectionTargets"])
         var container = encoder.singleValueContainer()
         try container.encode(values)
     }

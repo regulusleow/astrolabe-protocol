@@ -53,6 +53,7 @@ public value class RuntimeExtensionMap(
         require(values.keys.all(RuntimeNamespacedIdentifier::isValid)) {
             "Runtime extension keys must be namespaced"
         }
+        validateInspectionTargetsValue(values["common.inspectionTargets"])
     }
 }
 
