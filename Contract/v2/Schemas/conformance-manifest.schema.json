@@ -44,7 +44,7 @@
           "fixture": { "type": "string", "pattern": "^Contract/v2/Fixtures/(valid|invalid)/.+\\.json$" },
           "schema": { "type": "string", "format": "uri-reference" },
           "expectation": { "enum": ["valid", "invalid"] },
-          "semanticRule": { "enum": ["ascendingProtocolRange", "derivedVisibility", "semanticTree", "semanticValues"] },
+          "semanticRule": { "enum": ["ascendingProtocolRange", "derivedVisibility", "semanticTree", "semanticValues", "inspectionTargets"] },
           "reason": { "type": "string", "minLength": 1 }
         },
         "allOf": [

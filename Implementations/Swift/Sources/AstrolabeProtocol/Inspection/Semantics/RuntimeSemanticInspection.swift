@@ -437,6 +437,8 @@ private func semanticRect(_ value: RuntimeCoordinateRect, space: RuntimeCoordina
 }
 
 private func semanticAttribute(_ value: RuntimeAttributeValue) throws {
+    // Scan the complete existing typed value, including nested extension maps.
+    try semanticJSONStrings(JSONDecoder().decode(RuntimeJSONValue.self, from: JSONEncoder().encode(value)))
     switch value {
     case let .string(text): try semanticText(text)
     case let .stringList(texts):

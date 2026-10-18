@@ -263,7 +263,9 @@ Target selection errors use `inspection.targetAmbiguous`,
 defined `error.extensions["common.inspectionTargets"]` diagnostic is an array
 of up to 64 typed windows with unique `windowID`, optional `sceneID`, actual
 `runtimeType`, optional local/logical `bounds`, finite optional `level`,
-and optional namespaced `exclusionReason`. Swift/Kotlin provide typed read
+and optional namespaced `exclusionReason`. The `inspectionTargets` conformance
+rule checks ID uniqueness in standalone extension maps and failure responses.
+Swift/Kotlin provide typed read
 and construction accessors and validate this known extension during decoding.
 
 When the exact AX object is a UIView captured in the same render roots, the
