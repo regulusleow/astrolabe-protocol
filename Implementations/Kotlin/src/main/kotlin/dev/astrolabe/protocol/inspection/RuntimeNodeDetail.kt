@@ -37,7 +37,9 @@ public value class RuntimeAttributeCategory(
 @Serializable
 public data class RuntimeNodeDetailParameters(
     /** Node whose detail sections are requested. */
-    public val nodeID: RuntimeOpaqueIdentifier
+    public val nodeID: RuntimeOpaqueIdentifier,
+    /** Runtime snapshot owning frozen semantic detail; omitted for live render detail. */
+    public val snapshotID: RuntimeOpaqueIdentifier? = null
 ) {
     public companion object {
         /** Typed request contract for the node-detail method. */
@@ -73,7 +75,9 @@ public data class RuntimeNodeDetailPayload(
     /** Ordered semantic and platform detail sections. */
     public val sections: List<RuntimeAttributeSection>,
     /** Optional namespaced detail metadata. */
-    public val extensions: RuntimeExtensionMap? = null
+    public val extensions: RuntimeExtensionMap? = null,
+    /** Frozen semantic facts and original Runtime capture identity. */
+    public val semanticContext: RuntimeSemanticDetailContext? = null
 ) {
     public companion object {
         /** Typed success-payload contract for the node-detail method. */

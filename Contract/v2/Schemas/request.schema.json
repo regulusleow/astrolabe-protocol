@@ -47,7 +47,7 @@
           "type": "object",
           "properties": {
             "method": { "const": "hierarchySnapshot" },
-            "parameters": { "$ref": "https://astrolabe.dev/schemas/v2/common.schema.json#/$defs/emptyObject" }
+            "parameters": { "$ref": "https://astrolabe.dev/schemas/v2/inspection.schema.json#/$defs/hierarchySnapshotParameters" }
           }
         }
       ]
