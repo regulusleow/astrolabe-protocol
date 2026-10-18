@@ -18,6 +18,7 @@ class ProtocolFixtureConformanceTest {
     @Test
     fun `every valid fixture has an explicit Kotlin conformance path`() {
         val cases = mapOf<String, (ByteArray) -> Unit>(
+            "semantic-business-object.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },
             "semantic-capture.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
             "semantic-detail-context.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },
             "inspection-targets.json" to { codec.decodeValue(it, RuntimeExtensionMap.serializer()) },
@@ -58,6 +59,11 @@ class ProtocolFixtureConformanceTest {
     @Test
     fun `every invalid fixture has an explicit Kotlin rejection path`() {
         val cases = mapOf<String, (ByteArray) -> Unit>(
+            "semantic-text-run-extension-budget.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },
+            "semantic-layout-identifier-budget.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },
+            "semantic-layout-extension-budget.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },
+            "inspection-target-duplicate-id.json" to { codec.decodeValue(it, RuntimeExtensionMap.serializer()) },
+            "inspection-target-failure-duplicate-id.json" to { codec.decodeResponse(it) },
             "semantic-text-budget.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },
             "semantic-unicode-path.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
             "semantic-source-not-namespaced.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },

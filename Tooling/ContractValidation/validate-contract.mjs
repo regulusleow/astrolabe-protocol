@@ -126,11 +126,12 @@ function assertUnique(values, label) {
 function validateSemanticRule(rule, fixture) {
   switch (rule) {
   case "semanticTree": {
-    if (!validateSemanticValues(fixture)) return false;
+    if (!validateInspectionIssues(fixture.issues)) return false;
     const seen = new Set();
     function visit(nodes, parent, depth) {
       if (nodes.length && depth >= 20) return false;
       return nodes.every((node, index) => {
+        if (!validateJSONText(node.accessibility)) return false;
         if (node.parentID !== parent || node.siblingIndex !== index || seen.has(node.nodeID)) return false;
         seen.add(node.nodeID);
         return seen.size <= fixture.visitedNodeCount && visit(node.children, node.nodeID, depth + 1);
@@ -140,6 +141,12 @@ function validateSemanticRule(rule, fixture) {
   }
   case "semanticValues":
     return validateSemanticValues(fixture);
+  case "inspectionTargets": {
+    const extensions = fixture.error ? fixture.error.extensions : fixture;
+    const windows = extensions?.["common.inspectionTargets"];
+    return windows === undefined || (Array.isArray(windows) &&
+      new Set(windows.map((window) => window.windowID)).size === windows.length);
+  }
   case "ascendingProtocolRange": {
     const range = fixture.parameters?.supportedProtocolRange;
     const minimum = range?.minimum;
@@ -167,14 +174,33 @@ function readJSON(path) {
   return JSON.parse(readFileSync(path, "utf8"));
 }
 
-// JSON Schema lengths count code points; semantic budgets count UTF-8 bytes.
-function validateSemanticValues(value) {
+// Once inside an existing typed JSON value, member names carry no DTO meaning.
+function validateJSONText(value) {
   if (typeof value === "string") return Buffer.byteLength(value, "utf8") <= 16384;
-  if (Array.isArray(value)) return value.every(validateSemanticValues);
+  if (Array.isArray(value)) return value.every(validateJSONText);
   if (!value || typeof value !== "object") return true;
-  if (typeof value.path === "string" && Buffer.byteLength(value.path, "utf8") > 1024) return false;
-  if (value.type === "stringList" && Array.isArray(value.value) && value.value.length > 1500) return false;
-  if ("element" in value && ["identifier", "label", "value", "hint"].some((key) => typeof value[key] === "string" && Buffer.byteLength(value[key], "utf8") > 16384)) return false;
-  if (Array.isArray(value.textCandidates) && value.textCandidates.reduce((count, candidate) => count + (candidate.fields?.length ?? 0), 0) > 10000) return false;
-  return Object.values(value).every(validateSemanticValues);
+  return Object.values(value).every(validateJSONText);
+}
+
+function validateSemanticPath(path) {
+  return path === undefined || Buffer.byteLength(path, "utf8") <= 1024;
+}
+
+function validateInspectionIssues(issues) {
+  return issues.every((issue) => validateSemanticPath(issue.path));
+}
+
+// Traverse only the declared detail/candidate/field structure before typed values.
+function validateSemanticValues(context) {
+  if (!validateInspectionIssues(context.issues)) return false;
+  if (context.textCandidates.reduce((count, candidate) => count + candidate.fields.length, 0) > 10000) return false;
+  return context.textCandidates.every((candidate) =>
+    validateSemanticPath(candidate.path) &&
+    validateInspectionIssues(candidate.issues) &&
+    candidate.fields.every((field) => {
+      const attribute = field.attribute.value;
+      return validateSemanticPath(field.path) &&
+        (attribute.type !== "stringList" || attribute.value.length <= 1500) &&
+        validateJSONText(attribute.value);
+    }));
 }

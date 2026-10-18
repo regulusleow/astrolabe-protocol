@@ -198,6 +198,8 @@ private fun semanticRect(value: RuntimeCoordinateRect, space: RuntimeCoordinateS
 }
 
 private fun semanticAttribute(value: RuntimeAttributeValue) {
+    // Scan the complete existing typed value, including nested extension maps.
+    semanticJSONStrings(semanticJson.encodeToJsonElement(RuntimeAttributeValue.serializer(), value))
     when (value) {
         is RuntimeAttributeValue.StringValue -> semanticText(value.value)
         is RuntimeAttributeValue.StringList -> {
