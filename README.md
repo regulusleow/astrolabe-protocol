@@ -74,18 +74,20 @@ physical directory symmetry.
 
 ## Development
 
-Install the contract validator and run all checks:
+Kotlin checks require JDK 17. Install dependencies, validate the contract, and
+run the Swift and Kotlin tests:
 
 ```bash
 npm ci
 npm test
 swift test --parallel
 swift build -c release
+./gradlew :AstrolabeProtocolKotlin:test
 ```
 
 Validation compiles every Draft 2020-12 Schema, checks valid and invalid
 Fixtures, applies semantic rules that JSON Schema cannot express, and verifies
-that the Swift DTOs accept and reject the same payloads.
+that the Swift and Kotlin DTOs accept and reject the same payloads.
 
 `Contract/v2/manifest.json` declares recursive Fixture roots through
 `fixtureRoots`. Every JSON Fixture below those roots must have exactly one
