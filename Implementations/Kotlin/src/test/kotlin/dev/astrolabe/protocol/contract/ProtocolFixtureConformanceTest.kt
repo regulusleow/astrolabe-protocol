@@ -18,6 +18,7 @@ class ProtocolFixtureConformanceTest {
     @Test
     fun `every valid fixture has an explicit Kotlin conformance path`() {
         val cases = mapOf<String, (ByteArray) -> Unit>(
+            "semantic-basic-visibility.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
             "semantic-business-object.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },
             "semantic-capture.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
             "semantic-detail-context.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },
@@ -59,6 +60,7 @@ class ProtocolFixtureConformanceTest {
     @Test
     fun `every invalid fixture has an explicit Kotlin rejection path`() {
         val cases = mapOf<String, (ByteArray) -> Unit>(
+            "semantic-inconsistent-visibility.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
             "semantic-text-run-extension-budget.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },
             "semantic-layout-identifier-budget.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },
             "semantic-layout-extension-budget.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },

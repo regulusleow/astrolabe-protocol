@@ -201,6 +201,7 @@
             }
           ]
         },
+        "visibility": { "$ref": "#/$defs/visibility" },
         "availableDetailCategories": {
           "type": "array",
           "items": {

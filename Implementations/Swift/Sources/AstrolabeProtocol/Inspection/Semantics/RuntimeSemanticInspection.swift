@@ -208,6 +208,9 @@ public struct RuntimeSemanticNode: Codable, Equatable, Sendable {
     /// Finite screen/logical accessibility region when known.
     public let frameInScreen: RuntimeCoordinateRect?
 
+    /// Proven basic render visibility; absent when the semantic-to-render association is unknown.
+    public let visibility: RuntimeNodeVisibility?
+
     /// Categories available from the frozen detail capture.
     public let availableDetailCategories: [RuntimeNamespacedIdentifier]
 
@@ -222,6 +225,7 @@ public struct RuntimeSemanticNode: Codable, Equatable, Sendable {
         runtimeType: RuntimeType,
         accessibility: RuntimeAccessibility? = nil,
         frameInScreen: RuntimeCoordinateRect? = nil,
+        visibility: RuntimeNodeVisibility? = nil,
         availableDetailCategories: [RuntimeNamespacedIdentifier],
         children: [RuntimeSemanticNode]
     ) throws {
@@ -230,6 +234,10 @@ public struct RuntimeSemanticNode: Codable, Equatable, Sendable {
         try semanticString(runtimeType.name, maximum: 512)
         for ancestor in runtimeType.ancestors { try semanticString(ancestor, maximum: 512) }
         if let frameInScreen { try semanticRect(frameInScreen, space: .screen) }
+        if let visibility {
+            try semanticRequire(visibility.opacity.isFinite && (0...1).contains(visibility.opacity) &&
+                visibility.effectiveOpacity.isFinite && (0...1).contains(visibility.effectiveOpacity), "visibility opacity")
+        }
         if let accessibility {
             for value in [accessibility.identifier, accessibility.label, accessibility.value, accessibility.hint] { try semanticText(value) }
             try semanticRequire(accessibility.traits.count <= 2000 && Set(accessibility.traits).count == accessibility.traits.count, "trait budget/identity")
@@ -243,6 +251,7 @@ public struct RuntimeSemanticNode: Codable, Equatable, Sendable {
         self.runtimeType = runtimeType
         self.accessibility = accessibility
         self.frameInScreen = frameInScreen
+        self.visibility = visibility
         self.availableDetailCategories = availableDetailCategories
         self.children = children
     }
@@ -257,6 +266,7 @@ public struct RuntimeSemanticNode: Codable, Equatable, Sendable {
             runtimeType: container.decode(RuntimeType.self, forKey: .runtimeType),
             accessibility: container.decodeIfPresent(RuntimeAccessibility.self, forKey: .accessibility),
             frameInScreen: container.decodeIfPresent(RuntimeCoordinateRect.self, forKey: .frameInScreen),
+            visibility: container.decodeIfPresent(RuntimeNodeVisibility.self, forKey: .visibility),
             availableDetailCategories: container.decode([RuntimeNamespacedIdentifier].self, forKey: .availableDetailCategories),
             children: container.decode([RuntimeSemanticNode].self, forKey: .children)
         )
@@ -270,6 +280,7 @@ public struct RuntimeSemanticNode: Codable, Equatable, Sendable {
         case runtimeType
         case accessibility
         case frameInScreen
+        case visibility
         case availableDetailCategories
         case children
     }

@@ -132,6 +132,7 @@ function validateSemanticRule(rule, fixture) {
       if (nodes.length && depth >= 20) return false;
       return nodes.every((node, index) => {
         if (!validateJSONText(node.accessibility)) return false;
+        if (node.visibility && !validateSemanticRule("derivedVisibility", node.visibility)) return false;
         if (node.parentID !== parent || node.siblingIndex !== index || seen.has(node.nodeID)) return false;
         seen.add(node.nodeID);
         return seen.size <= fixture.visitedNodeCount && visit(node.children, node.nodeID, depth + 1);

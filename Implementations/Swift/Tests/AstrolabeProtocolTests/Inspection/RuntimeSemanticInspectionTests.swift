@@ -28,6 +28,24 @@ final class RuntimeSemanticInspectionTests: XCTestCase {
                        try JSONSerialization.jsonObject(with: source) as? NSDictionary)
     }
 
+    func testSemanticVisibilityRoundTripsAndRejectsInconsistentResults() throws {
+        for opacity in [1.0, 0.01, 0.005] {
+            var value = node()
+            var visibility: [String: Any] = ["hidden": false, "hiddenByAncestor": false,
+                "opacity": 1, "effectiveOpacity": opacity, "intersectsViewport": true,
+                "fullyClippedByAncestor": false, "onscreen": opacity > 0.01]
+            value["visibility"] = visibility
+            let source = try JSONSerialization.data(withJSONObject: value)
+            let decoded = try codec.decode(RuntimeSemanticNode.self, from: source)
+            XCTAssertEqual(try JSONSerialization.jsonObject(with: codec.encode(decoded)) as? NSDictionary,
+                           value as NSDictionary)
+            visibility["onscreen"] = !(opacity > 0.01)
+            value["visibility"] = visibility
+            XCTAssertThrowsError(try codec.decode(RuntimeSemanticNode.self,
+                from: JSONSerialization.data(withJSONObject: value)))
+        }
+    }
+
     func testSemanticCaptureRejectsInvalidIdentityTreeCoordinatesAndBudgets() throws {
         var invalid: [[String: Any]] = []
         var value = capture(); value["source"] = "unnamespaced"; invalid.append(value)

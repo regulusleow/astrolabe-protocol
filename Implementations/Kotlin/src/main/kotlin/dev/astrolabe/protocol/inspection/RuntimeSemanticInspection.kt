@@ -106,7 +106,9 @@ public data class RuntimeSemanticNode(
     /** Categories available from the frozen detail capture. */
     public val availableDetailCategories: List<RuntimeNamespacedIdentifier>,
     /** Actual AX containment, not layout or drawing order. */
-    public val children: List<RuntimeSemanticNode>
+    public val children: List<RuntimeSemanticNode>,
+    /** Proven basic render visibility; absent when the semantic-to-render association is unknown. */
+    public val visibility: RuntimeNodeVisibility? = null
 ) {
     init {
         require(siblingIndex in 0 until 2000) { "Invalid sibling index" }
@@ -114,6 +116,10 @@ public data class RuntimeSemanticNode(
         semanticString(runtimeType.name, 512)
         runtimeType.ancestors.forEach { semanticString(it, 512) }
         frameInScreen?.let { semanticRect(it, RuntimeCoordinateSpace.screen) }
+        visibility?.let {
+            require(it.opacity.isFinite() && it.opacity in 0.0..1.0 &&
+                it.effectiveOpacity.isFinite() && it.effectiveOpacity in 0.0..1.0) { "Invalid visibility opacity" }
+        }
         accessibility?.let {
             listOf(it.identifier, it.label, it.value, it.hint).forEach(::semanticText)
             require(it.traits.size <= 2000 && it.traits.toSet().size == it.traits.size) { "Invalid trait budget/identity" }

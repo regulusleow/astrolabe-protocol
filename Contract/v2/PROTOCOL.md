@@ -220,7 +220,12 @@ The optional `semanticCapture` payload contains typed `windowID`, namespaced
 It coexists with required render roots. Semantic nodes have capture-local
 opaque `nodeID`, required nullable `parentID`, zero-based `siblingIndex`,
 open `role`, actual `runtimeType`, optional public `accessibility` and
-screen/logical `frameInScreen`, `availableDetailCategories`, and AX `children`.
+screen/logical `frameInScreen`, optional `visibility`, `availableDetailCategories`, and AX `children`.
+When a Runtime proves a semantic-to-render association, `visibility` uses the same
+validated basic visibility fields and 0.01 opacity threshold as render nodes.
+It does not prove absence of sibling occlusion or pixel-level mask effects.
+AX existence or geometry matching alone cannot justify this association; omission
+remains unknown, and Hosts must not substitute default visible/opaque values.
 Missing optional facts mean unknown; they do not imply zero geometry, visible,
 opaque, or interactive. Existing render geometry, visibility, and interaction
 requirements remain unchanged. Local availability never adds a response status.
