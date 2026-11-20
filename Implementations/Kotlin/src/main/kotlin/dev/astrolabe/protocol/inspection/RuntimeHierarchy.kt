@@ -18,10 +18,10 @@ public data class RuntimeType(
     public val ancestors: List<String>
 ) {
     init {
-        require(name.isNotEmpty() && name.length <= MAXIMUM_RUNTIME_TYPE_LENGTH) {
+        require(name.isNotEmpty() && name.codePointCount(0, name.length) <= MAXIMUM_RUNTIME_TYPE_LENGTH) {
             "Runtime type name must contain between 1 and 512 characters"
         }
-        require(ancestors.all { it.isNotEmpty() && it.length <= MAXIMUM_RUNTIME_TYPE_LENGTH }) {
+        require(ancestors.all { it.isNotEmpty() && it.codePointCount(0, it.length) <= MAXIMUM_RUNTIME_TYPE_LENGTH }) {
             "Runtime type ancestors must contain between 1 and 512 characters"
         }
     }

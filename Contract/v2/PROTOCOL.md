@@ -112,6 +112,8 @@ Runtime capabilities.
 
 ## 6. Identity and lifecycle
 
+Opaque wire identifiers contain 1 to 256 Unicode code points.
+
 - `target.identifier` identifies the inspected process instance. It is opaque
   and changes when the App process restarts.
 - `nodeID` is an opaque, non-empty string scoped to one Runtime process. It is

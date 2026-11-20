@@ -5,6 +5,13 @@ import XCTest
 final class RuntimeSemanticInspectionTests: XCTestCase {
     private let codec = RuntimeMessageCodec()
 
+    func testOpaqueIdentifierLengthUsesUnicodeCodePoints() throws {
+        let boundary = String(repeating: "😀", count: 256)
+        XCTAssertEqual(try RuntimeOpaqueIdentifier(rawValue: boundary).rawValue, boundary)
+        XCTAssertThrowsError(try RuntimeOpaqueIdentifier(rawValue: boundary + "a"))
+        XCTAssertThrowsError(try RuntimeOpaqueIdentifier(rawValue: String(repeating: "x\u{301}", count: 180)))
+    }
+
     func testSemanticRequestPreservesExplicitWindow() throws {
         let source = Data(#"{"semanticCapture":{"windowID":"window:1"}}"#.utf8)
         let request = try codec.decode(RuntimeHierarchySnapshotParameters.self, from: source)

@@ -10,6 +10,21 @@ class RuntimeSemanticInspectionTest {
     private val codec = RuntimeMessageCodec()
 
     @Test
+    fun `opaque identifier length uses Unicode code points`() {
+        val boundary = "😀".repeat(256)
+        assertEquals(boundary, RuntimeOpaqueIdentifier(boundary).rawValue)
+        assertFailsWith<IllegalArgumentException> { RuntimeOpaqueIdentifier(boundary + "a") }
+        assertFailsWith<IllegalArgumentException> { RuntimeOpaqueIdentifier("x\u0301".repeat(180)) }
+    }
+
+    @Test
+    fun `runtime type names and ancestors use the same Unicode bound as semantic nodes`() {
+        val name = "😀".repeat(512)
+        assertEquals(name, RuntimeType(name, listOf(name)).name)
+        assertFailsWith<IllegalArgumentException> { RuntimeType("type", listOf(name + "a")) }
+    }
+
+    @Test
     fun `semantic requests preserve explicit window and snapshot identity`() {
         val request = """{"requestID":"11111111-1111-4111-8111-111111111111","protocolVersion":{"major":2,"minor":0},"method":"hierarchySnapshot","parameters":{"semanticCapture":{"windowID":"window:1"}}}""".toByteArray()
         val envelope = codec.decodeRequest(request)

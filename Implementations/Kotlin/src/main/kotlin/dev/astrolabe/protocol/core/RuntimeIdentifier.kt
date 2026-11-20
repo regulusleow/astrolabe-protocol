@@ -18,7 +18,7 @@ public value class RuntimeOpaqueIdentifier(
     public val rawValue: String
 ) {
     init {
-        require(rawValue.isNotEmpty() && rawValue.length <= MAXIMUM_IDENTIFIER_LENGTH) {
+        require(rawValue.isNotEmpty() && rawValue.codePointCount(0, rawValue.length) <= MAXIMUM_IDENTIFIER_LENGTH) {
             "Opaque identifier must contain between 1 and 256 characters"
         }
     }
