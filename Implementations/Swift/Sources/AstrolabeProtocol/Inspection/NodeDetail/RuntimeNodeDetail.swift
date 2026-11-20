@@ -55,6 +55,12 @@ public struct RuntimeNodeDetailParameters: Codable, Equatable, Sendable, Runtime
         self.snapshotID = snapshotID
     }
 
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        nodeID = try container.decode(RuntimeOpaqueIdentifier.self, forKey: .nodeID)
+        snapshotID = container.contains(.snapshotID) ? try container.decode(RuntimeOpaqueIdentifier.self, forKey: .snapshotID) : nil
+    }
+
     public static let runtimeMethod = RuntimeMethod.nodeDetail
 }
 

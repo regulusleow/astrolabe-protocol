@@ -5,6 +5,20 @@ import XCTest
 final class RuntimeSemanticInspectionTests: XCTestCase {
     private let codec = RuntimeMessageCodec()
 
+    func testCaptureSelectorsAllowOmissionButRejectExplicitNull() throws {
+        func hierarchy(_ json: String) throws -> RuntimeHierarchySnapshotParameters {
+            try codec.decode(RuntimeHierarchySnapshotParameters.self, from: Data(json.utf8))
+        }
+        XCTAssertNil(try hierarchy("{}").semanticCapture)
+        XCTAssertNotNil(try hierarchy(#"{"semanticCapture":{}}"#).semanticCapture)
+        XCTAssertThrowsError(try hierarchy(#"{"semanticCapture":null}"#))
+        XCTAssertThrowsError(try hierarchy(#"{"semanticCapture":{"windowID":null}}"#))
+        XCTAssertThrowsError(try codec.decode(RuntimeNodeDetailParameters.self,
+            from: Data(#"{"nodeID":"native-1","snapshotID":null}"#.utf8)))
+        XCTAssertNil(try codec.decode(RuntimeNodeDetailParameters.self,
+            from: Data(#"{"nodeID":"native-1"}"#.utf8)).snapshotID)
+    }
+
     func testOpaqueIdentifierLengthUsesUnicodeCodePoints() throws {
         let boundary = String(repeating: "😀", count: 256)
         XCTAssertEqual(try RuntimeOpaqueIdentifier(rawValue: boundary).rawValue, boundary)

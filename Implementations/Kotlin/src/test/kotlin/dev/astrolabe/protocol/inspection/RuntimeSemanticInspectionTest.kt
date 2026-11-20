@@ -3,11 +3,48 @@ package dev.astrolabe.protocol
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
 class RuntimeSemanticInspectionTest {
     private val codec = RuntimeMessageCodec()
+
+    @Test
+    fun `capture selectors allow omission but reject explicit null`() {
+        val capture = RuntimeHierarchyCaptureParameters.serializer()
+        val detail = RuntimeNodeDetailParameters.serializer()
+        assertEquals(null, codec.decodeValue("{}".toByteArray(), capture).semanticCapture)
+        assertEquals(RuntimeSemanticCaptureOptions(), codec.decodeValue("""{"semanticCapture":{}}""".toByteArray(), capture).semanticCapture)
+        assertEquals(null, codec.decodeValue("""{"nodeID":"native-1"}""".toByteArray(), detail).snapshotID)
+        for (body in listOf("""{"semanticCapture":null}""", """{"semanticCapture":{"windowID":null}}""")) {
+            assertFailsWith<RuntimeMessageException> { codec.decodeValue(body.toByteArray(), capture) }
+        }
+        assertFailsWith<RuntimeMessageException> {
+            codec.decodeValue("""{"nodeID":"native-1","snapshotID":null}""".toByteArray(), detail)
+        }
+    }
+
+    @Test
+    fun `legacy hierarchy decoder refuses selectors it cannot represent`() {
+        assertEquals(StructureKind.OBJECT, RuntimeHierarchySnapshotParameters.serializer().descriptor.kind)
+        for (body in listOf("""{"semanticCapture":null}""", """{"semanticCapture":{}}""")) {
+            assertFailsWith<RuntimeMessageException> {
+                codec.decodeValue(body.toByteArray(), RuntimeHierarchySnapshotParameters.serializer())
+            }
+        }
+    }
+
+    @Test
+    fun `absent selectors are omitted even when other defaults are encoded`() {
+        val json = Json { encodeDefaults = true }
+        assertEquals("{}", json.encodeToString(RuntimeHierarchyCaptureParameters.serializer(), RuntimeHierarchyCaptureParameters()))
+        assertEquals("""{"semanticCapture":{}}""", json.encodeToString(RuntimeHierarchyCaptureParameters.serializer(),
+            RuntimeHierarchyCaptureParameters(RuntimeSemanticCaptureOptions())))
+        assertEquals("""{"nodeID":"n"}""", json.encodeToString(RuntimeNodeDetailParameters.serializer(),
+            RuntimeNodeDetailParameters(RuntimeOpaqueIdentifier("n"))))
+    }
 
     @Test
     fun `opaque identifier length uses Unicode code points`() {

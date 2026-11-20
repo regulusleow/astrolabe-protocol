@@ -7,6 +7,8 @@
 
 package dev.astrolabe.protocol
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 
 /** Namespaced semantic or platform attribute identifier. */
@@ -39,6 +41,9 @@ public data class RuntimeNodeDetailParameters(
     /** Node whose detail sections are requested. */
     public val nodeID: RuntimeOpaqueIdentifier,
     /** Runtime snapshot owning frozen semantic detail; omitted for live render detail. */
+    @OptIn(ExperimentalSerializationApi::class)
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    @Serializable(with = OptionalSelectorIDSerializer::class)
     public val snapshotID: RuntimeOpaqueIdentifier? = null
 ) {
     // Keep the constructor and copy descriptors used by already compiled Protocol 2.1 clients.

@@ -213,8 +213,14 @@ require a protocol version upgrade. Only an explicit
 `hierarchySnapshot.parameters.semanticCapture` requests semantic inspection;
 omission retains the existing empty request. An empty options object requests
 the unique eligible ordinary window, while `windowID` selects one native window
-registry identity. A Runtime without this capability must return
-`capabilityUnavailable` instead of ignoring the opt-in.
+registry identity. Clients must check the handshake for `semanticInspection`
+before sending either a semantic capture request or a snapshot-bound detail
+request. If the capability is absent, report `capabilityUnavailable` locally.
+Runtimes implementing this contract must also reject unsupported semantic
+requests with `capabilityUnavailable`. Older Runtimes, including Android
+Runtime 2.3.0, may ignore the selectors and return ordinary hierarchy or live
+detail. The `semanticCapture`, `windowID`, and `snapshotID` request selectors
+may be omitted. Explicit JSON null is invalid for each of them.
 
 Kotlin clients can continue to send `RuntimeHierarchySnapshotParameters` for an
 ordinary capture. Use `RuntimeHierarchyCaptureParameters.contract` to encode or

@@ -7,7 +7,16 @@
 
 package dev.astrolabe.protocol
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.descriptors.buildSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.encoding.encodeStructure
 
 /** Platform runtime type and its ancestor chain. */
 @Serializable
@@ -161,7 +170,7 @@ public data class RuntimeNode(
 }
 
 /** Empty parameters for capturing a hierarchy snapshot. */
-@Serializable
+@Serializable(with = RenderOnlyHierarchyParametersSerializer::class)
 public data object RuntimeHierarchySnapshotParameters {
     /** Typed request contract for the hierarchy-snapshot method. */
     public val contract: RuntimeMethodContract<RuntimeHierarchySnapshotParameters> by lazy {
@@ -169,10 +178,30 @@ public data object RuntimeHierarchySnapshotParameters {
     }
 }
 
+internal object RenderOnlyHierarchyParametersSerializer : KSerializer<RuntimeHierarchySnapshotParameters> {
+    @OptIn(InternalSerializationApi::class)
+    override val descriptor = buildSerialDescriptor(
+        "dev.astrolabe.protocol.RuntimeHierarchySnapshotParameters", StructureKind.OBJECT
+    )
+
+    override fun deserialize(decoder: Decoder): RuntimeHierarchySnapshotParameters {
+        val parameters = decoder.decodeSerializableValue(RuntimeHierarchyCaptureParameters.serializer())
+        require(parameters.semanticCapture == null) { "Ordinary hierarchy parameters cannot represent semantic capture" }
+        return RuntimeHierarchySnapshotParameters
+    }
+
+    override fun serialize(encoder: Encoder, value: RuntimeHierarchySnapshotParameters) {
+        encoder.encodeStructure(descriptor) {}
+    }
+}
+
 /** Parameters for capturing a hierarchy snapshot. */
 @Serializable
 public data class RuntimeHierarchyCaptureParameters(
     /** Explicit semantic capture opt-in; omitted for the original request. */
+    @OptIn(ExperimentalSerializationApi::class)
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    @Serializable(with = OptionalCaptureOptionsSerializer::class)
     public val semanticCapture: RuntimeSemanticCaptureOptions? = null
 ) {
     public companion object {

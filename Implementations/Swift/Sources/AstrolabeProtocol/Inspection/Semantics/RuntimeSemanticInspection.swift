@@ -12,6 +12,11 @@ public struct RuntimeSemanticCaptureOptions: Codable, Equatable, Sendable {
     public let windowID: RuntimeOpaqueIdentifier?
 
     public init(windowID: RuntimeOpaqueIdentifier? = nil) { self.windowID = windowID }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        windowID = container.contains(.windowID) ? try container.decode(RuntimeOpaqueIdentifier.self, forKey: .windowID) : nil
+    }
 }
 
 public struct RuntimeInspectionIssue: Codable, Equatable, Sendable {

@@ -1,7 +1,13 @@
 package dev.astrolabe.protocol
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.descriptors.nullable
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
@@ -10,10 +16,28 @@ import kotlinx.serialization.json.encodeToJsonElement
 @Serializable
 public enum class RuntimeSemanticAvailability { complete, partial, unavailable }
 
+/** An absent selector uses its default. A present selector must decode a concrete value. */
+internal abstract class OptionalSelectorSerializer<T : Any>(
+    private val valueSerializer: KSerializer<T>
+) : KSerializer<T?> {
+    override val descriptor = valueSerializer.descriptor.nullable
+    override fun deserialize(decoder: Decoder): T = valueSerializer.deserialize(decoder)
+    override fun serialize(encoder: Encoder, value: T?) = valueSerializer.serialize(encoder, requireNotNull(value))
+}
+
+internal object OptionalSelectorIDSerializer :
+    OptionalSelectorSerializer<RuntimeOpaqueIdentifier>(RuntimeOpaqueIdentifier.serializer())
+
+internal object OptionalCaptureOptionsSerializer :
+    OptionalSelectorSerializer<RuntimeSemanticCaptureOptions>(RuntimeSemanticCaptureOptions.serializer())
+
 /** Explicit semantic capture opt-in. */
 @Serializable
 public data class RuntimeSemanticCaptureOptions(
     /** Explicit native window, omitted only for a unique eligible window. */
+    @OptIn(ExperimentalSerializationApi::class)
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    @Serializable(with = OptionalSelectorIDSerializer::class)
     public val windowID: RuntimeOpaqueIdentifier? = null
 )
 

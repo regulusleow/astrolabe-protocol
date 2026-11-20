@@ -112,6 +112,11 @@ public struct RuntimeHierarchySnapshotParameters: Codable, Equatable, Sendable, 
     public init(semanticCapture: RuntimeSemanticCaptureOptions? = nil) {
         self.semanticCapture = semanticCapture
     }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        semanticCapture = container.contains(.semanticCapture) ? try container.decode(RuntimeSemanticCaptureOptions.self, forKey: .semanticCapture) : nil
+    }
 }
 
 public struct RuntimePatchableAttributesParameters: RuntimeEmptyMethodParameters {
