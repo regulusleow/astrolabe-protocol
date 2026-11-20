@@ -160,15 +160,24 @@ public data class RuntimeNode(
     }
 }
 
+/** Empty parameters for capturing a hierarchy snapshot. */
+@Serializable
+public data object RuntimeHierarchySnapshotParameters {
+    /** Typed request contract for the hierarchy-snapshot method. */
+    public val contract: RuntimeMethodContract<RuntimeHierarchySnapshotParameters> by lazy {
+        RuntimeMethodContract(RuntimeMethod.hierarchySnapshot, serializer())
+    }
+}
+
 /** Parameters for capturing a hierarchy snapshot. */
 @Serializable
-public data class RuntimeHierarchySnapshotParameters(
+public data class RuntimeHierarchyCaptureParameters(
     /** Explicit semantic capture opt-in; omitted for the original request. */
     public val semanticCapture: RuntimeSemanticCaptureOptions? = null
 ) {
     public companion object {
         /** Typed request contract for the hierarchy-snapshot method. */
-        public val contract: RuntimeMethodContract<RuntimeHierarchySnapshotParameters> by lazy {
+        public val contract: RuntimeMethodContract<RuntimeHierarchyCaptureParameters> by lazy {
             RuntimeMethodContract(RuntimeMethod.hierarchySnapshot, serializer())
         }
     }
@@ -198,6 +207,39 @@ public data class RuntimeHierarchySnapshotPayload(
     /** Typed semantic observation for the selected window. */
     public val semanticCapture: RuntimeSemanticCapture? = null
 ) {
+    // Keep the constructor and copy descriptors used by already compiled Protocol 2.1 clients.
+    @Deprecated("Binary compatibility with Protocol 2.1", level = DeprecationLevel.HIDDEN)
+    public constructor(
+        snapshotID: RuntimeOpaqueIdentifier,
+        capturedAtUnixTime: Double,
+        targetIdentifier: RuntimeOpaqueIdentifier,
+        orientation: String,
+        display: RuntimeDisplayInfo,
+        viewport: RuntimeCoordinateRect,
+        roots: List<RuntimeNode>,
+        relations: List<RuntimeNodeRelation>? = null,
+        extensions: RuntimeExtensionMap? = null
+    ) : this(
+        snapshotID, capturedAtUnixTime, targetIdentifier, orientation,
+        display, viewport, roots, relations, extensions, null
+    )
+
+    @Deprecated("Binary compatibility with Protocol 2.1", level = DeprecationLevel.HIDDEN)
+    public fun copy(
+        snapshotID: RuntimeOpaqueIdentifier = this.snapshotID,
+        capturedAtUnixTime: Double = this.capturedAtUnixTime,
+        targetIdentifier: RuntimeOpaqueIdentifier = this.targetIdentifier,
+        orientation: String = this.orientation,
+        display: RuntimeDisplayInfo = this.display,
+        viewport: RuntimeCoordinateRect = this.viewport,
+        roots: List<RuntimeNode> = this.roots,
+        relations: List<RuntimeNodeRelation>? = this.relations,
+        extensions: RuntimeExtensionMap? = this.extensions
+    ): RuntimeHierarchySnapshotPayload = RuntimeHierarchySnapshotPayload(
+        snapshotID, capturedAtUnixTime, targetIdentifier, orientation,
+        display, viewport, roots, relations, extensions, this.semanticCapture
+    )
+
     init {
         require(capturedAtUnixTime >= 0.0) { "Hierarchy capture time cannot be negative" }
         require(orientation.isNotEmpty() && orientation.length <= MAXIMUM_ORIENTATION_LENGTH) {

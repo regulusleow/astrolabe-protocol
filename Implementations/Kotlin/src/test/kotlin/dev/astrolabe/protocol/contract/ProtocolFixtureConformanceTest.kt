@@ -23,7 +23,7 @@ class ProtocolFixtureConformanceTest {
             "semantic-capture.json" to { codec.decodeValue(it, RuntimeSemanticCapture.serializer()) },
             "semantic-detail-context.json" to { codec.decodeValue(it, RuntimeSemanticDetailContext.serializer()) },
             "inspection-targets.json" to { codec.decodeValue(it, RuntimeExtensionMap.serializer()) },
-            "semantic-hierarchy-request.json" to { decodeRequest(RuntimeHierarchySnapshotParameters.contract, it) },
+            "semantic-hierarchy-request.json" to { decodeRequest(RuntimeHierarchyCaptureParameters.contract, it) },
             "semantic-node-detail-request.json" to { decodeRequest(RuntimeNodeDetailParameters.contract, it) },
             "inspection-target-failure.json" to { codec.decodeResponse(it) },
             "application-info-request.json" to { decodeRequest(RuntimeApplicationInfoParameters.contract, it) },

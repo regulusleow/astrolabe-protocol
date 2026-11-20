@@ -19,7 +19,8 @@ class RuntimeHierarchyModelTest {
         val request = codec.decodeRequest(fixture("v2/Fixtures/valid/hierarchy-snapshot-request.json"))
         val response = codec.decodeResponse(fixture("v2/Fixtures/valid/hierarchy-snapshot-response.json"))
 
-        codec.decodeRequestParameters(request, RuntimeHierarchySnapshotParameters.contract)
+        assertEquals(RuntimeHierarchySnapshotParameters,
+            codec.decodeRequestParameters(request, RuntimeHierarchySnapshotParameters.contract))
         val payload = codec.decodeSuccessPayload(response, RuntimeHierarchySnapshotPayload.contract)
 
         assertEquals("node:window:0", payload.roots.single().nodeID.rawValue)

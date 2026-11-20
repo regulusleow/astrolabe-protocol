@@ -13,8 +13,8 @@ class RuntimeSemanticInspectionTest {
     fun `semantic requests preserve explicit window and snapshot identity`() {
         val request = """{"requestID":"11111111-1111-4111-8111-111111111111","protocolVersion":{"major":2,"minor":0},"method":"hierarchySnapshot","parameters":{"semanticCapture":{"windowID":"window:1"}}}""".toByteArray()
         val envelope = codec.decodeRequest(request)
-        val parameters = codec.decodeRequestParameters(envelope, RuntimeHierarchySnapshotParameters.contract)
-        val encoded = codec.encodeRequest(envelope.requestID, RuntimeHierarchySnapshotParameters.contract, parameters)
+        val parameters = codec.decodeRequestParameters(envelope, RuntimeHierarchyCaptureParameters.contract)
+        val encoded = codec.encodeRequest(envelope.requestID, RuntimeHierarchyCaptureParameters.contract, parameters)
         assertEquals(codec.decodeDocument(request), codec.decodeDocument(encoded))
         val detail = """{"nodeID":"semantic:1","snapshotID":"snapshot:1"}""".toByteArray()
         val value = codec.decodeValue(detail, RuntimeNodeDetailParameters.serializer())

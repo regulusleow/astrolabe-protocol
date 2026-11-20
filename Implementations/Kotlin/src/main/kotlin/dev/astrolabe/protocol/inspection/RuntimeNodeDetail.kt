@@ -41,6 +41,17 @@ public data class RuntimeNodeDetailParameters(
     /** Runtime snapshot owning frozen semantic detail; omitted for live render detail. */
     public val snapshotID: RuntimeOpaqueIdentifier? = null
 ) {
+    // Keep the constructor and copy descriptors used by already compiled Protocol 2.1 clients.
+    @Deprecated("Binary compatibility with Protocol 2.1", level = DeprecationLevel.HIDDEN)
+    public constructor(
+        nodeID: RuntimeOpaqueIdentifier
+    ) : this(nodeID, null)
+
+    @Deprecated("Binary compatibility with Protocol 2.1", level = DeprecationLevel.HIDDEN)
+    public fun copy(
+        nodeID: RuntimeOpaqueIdentifier = this.nodeID
+    ): RuntimeNodeDetailParameters = RuntimeNodeDetailParameters(nodeID, this.snapshotID)
+
     public companion object {
         /** Typed request contract for the node-detail method. */
         public val contract: RuntimeMethodContract<RuntimeNodeDetailParameters> by lazy {
@@ -79,6 +90,21 @@ public data class RuntimeNodeDetailPayload(
     /** Frozen semantic facts and original Runtime capture identity. */
     public val semanticContext: RuntimeSemanticDetailContext? = null
 ) {
+    // Keep the constructor and copy descriptors used by already compiled Protocol 2.1 clients.
+    @Deprecated("Binary compatibility with Protocol 2.1", level = DeprecationLevel.HIDDEN)
+    public constructor(
+        nodeID: RuntimeOpaqueIdentifier,
+        sections: List<RuntimeAttributeSection>,
+        extensions: RuntimeExtensionMap? = null
+    ) : this(nodeID, sections, extensions, null)
+
+    @Deprecated("Binary compatibility with Protocol 2.1", level = DeprecationLevel.HIDDEN)
+    public fun copy(
+        nodeID: RuntimeOpaqueIdentifier = this.nodeID,
+        sections: List<RuntimeAttributeSection> = this.sections,
+        extensions: RuntimeExtensionMap? = this.extensions
+    ): RuntimeNodeDetailPayload = RuntimeNodeDetailPayload(nodeID, sections, extensions, this.semanticContext)
+
     public companion object {
         /** Typed success-payload contract for the node-detail method. */
         public val contract: RuntimeMethodContract<RuntimeNodeDetailPayload> by lazy {

@@ -214,6 +214,10 @@ the unique eligible ordinary window, while `windowID` selects one native window
 registry identity. A Runtime without this capability must return
 `capabilityUnavailable` instead of ignoring the opt-in.
 
+Kotlin clients can continue to send `RuntimeHierarchySnapshotParameters` for an
+ordinary capture. Use `RuntimeHierarchyCaptureParameters.contract` to encode or
+decode the optional semantic scope.
+
 The optional `semanticCapture` payload contains typed `windowID`, namespaced
 `source`, local `availability` (`complete`, `partial`, `unavailable`),
 `issues`, `visitedNodeCount`, `wasTruncated`, and ordered `roots`.
