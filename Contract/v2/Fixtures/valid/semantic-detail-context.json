@@ -1,0 +1,40 @@
+{
+  "snapshotID": "snapshot:1",
+  "capturedAtUnixTime": 123,
+  "source": "ios.swiftui",
+  "availability": "partial",
+  "issues": [],
+  "wasTruncated": false,
+  "textCandidates": [
+    {
+      "source": "ios.swiftui.attachmentsStorage",
+      "path": "attachment.text",
+      "fields": [
+        {
+          "path": "font.size",
+          "attribute": {
+            "identifier": "common.text.fontSize",
+            "value": {
+              "type": "measurement",
+              "value": {
+                "value": 28,
+                "unit": "scaledLogical"
+              }
+            }
+          }
+        },
+        {
+          "path": "content",
+          "attribute": {
+            "identifier": "common.text.content",
+            "value": {
+              "type": "string",
+              "value": "Title"
+            }
+          }
+        }
+      ],
+      "issues": []
+    }
+  ]
+}

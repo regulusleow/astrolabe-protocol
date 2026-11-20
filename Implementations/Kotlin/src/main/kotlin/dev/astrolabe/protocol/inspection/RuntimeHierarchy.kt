@@ -7,7 +7,16 @@
 
 package dev.astrolabe.protocol
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.descriptors.buildSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.encoding.encodeStructure
 
 /** Platform runtime type and its ancestor chain. */
 @Serializable
@@ -18,10 +27,10 @@ public data class RuntimeType(
     public val ancestors: List<String>
 ) {
     init {
-        require(name.isNotEmpty() && name.length <= MAXIMUM_RUNTIME_TYPE_LENGTH) {
+        require(name.isNotEmpty() && name.codePointCount(0, name.length) <= MAXIMUM_RUNTIME_TYPE_LENGTH) {
             "Runtime type name must contain between 1 and 512 characters"
         }
-        require(ancestors.all { it.isNotEmpty() && it.length <= MAXIMUM_RUNTIME_TYPE_LENGTH }) {
+        require(ancestors.all { it.isNotEmpty() && it.codePointCount(0, it.length) <= MAXIMUM_RUNTIME_TYPE_LENGTH }) {
             "Runtime type ancestors must contain between 1 and 512 characters"
         }
     }
@@ -161,11 +170,45 @@ public data class RuntimeNode(
 }
 
 /** Empty parameters for capturing a hierarchy snapshot. */
-@Serializable
+@Serializable(with = RenderOnlyHierarchyParametersSerializer::class)
 public data object RuntimeHierarchySnapshotParameters {
     /** Typed request contract for the hierarchy-snapshot method. */
     public val contract: RuntimeMethodContract<RuntimeHierarchySnapshotParameters> by lazy {
         RuntimeMethodContract(RuntimeMethod.hierarchySnapshot, serializer())
+    }
+}
+
+internal object RenderOnlyHierarchyParametersSerializer : KSerializer<RuntimeHierarchySnapshotParameters> {
+    @OptIn(InternalSerializationApi::class)
+    override val descriptor = buildSerialDescriptor(
+        "dev.astrolabe.protocol.RuntimeHierarchySnapshotParameters", StructureKind.OBJECT
+    )
+
+    override fun deserialize(decoder: Decoder): RuntimeHierarchySnapshotParameters {
+        val parameters = decoder.decodeSerializableValue(RuntimeHierarchyCaptureParameters.serializer())
+        require(parameters.semanticCapture == null) { "Ordinary hierarchy parameters cannot represent semantic capture" }
+        return RuntimeHierarchySnapshotParameters
+    }
+
+    override fun serialize(encoder: Encoder, value: RuntimeHierarchySnapshotParameters) {
+        encoder.encodeStructure(descriptor) {}
+    }
+}
+
+/** Parameters for capturing a hierarchy snapshot. */
+@Serializable
+public data class RuntimeHierarchyCaptureParameters(
+    /** Explicit semantic capture opt-in; omitted for the original request. */
+    @OptIn(ExperimentalSerializationApi::class)
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    @Serializable(with = OptionalCaptureOptionsSerializer::class)
+    public val semanticCapture: RuntimeSemanticCaptureOptions? = null
+) {
+    public companion object {
+        /** Typed request contract for the hierarchy-snapshot method. */
+        public val contract: RuntimeMethodContract<RuntimeHierarchyCaptureParameters> by lazy {
+            RuntimeMethodContract(RuntimeMethod.hierarchySnapshot, serializer())
+        }
     }
 }
 
@@ -189,8 +232,43 @@ public data class RuntimeHierarchySnapshotPayload(
     /** Directed cross-tree relations captured with this hierarchy. */
     public val relations: List<RuntimeNodeRelation>? = null,
     /** Optional namespaced snapshot facts. */
-    public val extensions: RuntimeExtensionMap? = null
+    public val extensions: RuntimeExtensionMap? = null,
+    /** Typed semantic observation for the selected window. */
+    public val semanticCapture: RuntimeSemanticCapture? = null
 ) {
+    // Keep the constructor and copy descriptors used by already compiled Protocol 2.1 clients.
+    @Deprecated("Binary compatibility with Protocol 2.1", level = DeprecationLevel.HIDDEN)
+    public constructor(
+        snapshotID: RuntimeOpaqueIdentifier,
+        capturedAtUnixTime: Double,
+        targetIdentifier: RuntimeOpaqueIdentifier,
+        orientation: String,
+        display: RuntimeDisplayInfo,
+        viewport: RuntimeCoordinateRect,
+        roots: List<RuntimeNode>,
+        relations: List<RuntimeNodeRelation>? = null,
+        extensions: RuntimeExtensionMap? = null
+    ) : this(
+        snapshotID, capturedAtUnixTime, targetIdentifier, orientation,
+        display, viewport, roots, relations, extensions, null
+    )
+
+    @Deprecated("Binary compatibility with Protocol 2.1", level = DeprecationLevel.HIDDEN)
+    public fun copy(
+        snapshotID: RuntimeOpaqueIdentifier = this.snapshotID,
+        capturedAtUnixTime: Double = this.capturedAtUnixTime,
+        targetIdentifier: RuntimeOpaqueIdentifier = this.targetIdentifier,
+        orientation: String = this.orientation,
+        display: RuntimeDisplayInfo = this.display,
+        viewport: RuntimeCoordinateRect = this.viewport,
+        roots: List<RuntimeNode> = this.roots,
+        relations: List<RuntimeNodeRelation>? = this.relations,
+        extensions: RuntimeExtensionMap? = this.extensions
+    ): RuntimeHierarchySnapshotPayload = RuntimeHierarchySnapshotPayload(
+        snapshotID, capturedAtUnixTime, targetIdentifier, orientation,
+        display, viewport, roots, relations, extensions, this.semanticCapture
+    )
+
     init {
         require(capturedAtUnixTime >= 0.0) { "Hierarchy capture time cannot be negative" }
         require(orientation.isNotEmpty() && orientation.length <= MAXIMUM_ORIENTATION_LENGTH) {

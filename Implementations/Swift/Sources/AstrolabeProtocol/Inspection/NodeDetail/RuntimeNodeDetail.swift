@@ -47,8 +47,18 @@ public struct RuntimeNodeDetailParameters: Codable, Equatable, Sendable, Runtime
     /// Node whose detail sections are requested.
     public let nodeID: RuntimeOpaqueIdentifier
 
-    public init(nodeID: RuntimeOpaqueIdentifier) {
+    /// Runtime snapshot owning frozen semantic detail; omitted for live render detail.
+    public let snapshotID: RuntimeOpaqueIdentifier?
+
+    public init(nodeID: RuntimeOpaqueIdentifier, snapshotID: RuntimeOpaqueIdentifier? = nil) {
         self.nodeID = nodeID
+        self.snapshotID = snapshotID
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        nodeID = try container.decode(RuntimeOpaqueIdentifier.self, forKey: .nodeID)
+        snapshotID = container.contains(.snapshotID) ? try container.decode(RuntimeOpaqueIdentifier.self, forKey: .snapshotID) : nil
     }
 
     public static let runtimeMethod = RuntimeMethod.nodeDetail
@@ -90,14 +100,19 @@ public struct RuntimeNodeDetailPayload: Codable, Equatable, Sendable, RuntimeMet
     /// Optional namespaced detail metadata.
     public let extensions: RuntimeExtensionMap?
 
+    /// Frozen semantic facts and identity from the original Runtime capture.
+    public let semanticContext: RuntimeSemanticDetailContext?
+
     public init(
         nodeID: RuntimeOpaqueIdentifier,
         sections: [RuntimeAttributeSection],
-        extensions: RuntimeExtensionMap? = nil
+        extensions: RuntimeExtensionMap? = nil,
+        semanticContext: RuntimeSemanticDetailContext? = nil
     ) {
         self.nodeID = nodeID
         self.sections = sections
         self.extensions = extensions
+        self.semanticContext = semanticContext
     }
 
     public static let runtimeMethod = RuntimeMethod.nodeDetail

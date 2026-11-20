@@ -104,9 +104,19 @@ public struct RuntimeApplicationInfoParameters: RuntimeEmptyMethodParameters {
     public init() {}
 }
 
-public struct RuntimeHierarchySnapshotParameters: RuntimeEmptyMethodParameters {
+public struct RuntimeHierarchySnapshotParameters: Codable, Equatable, Sendable, RuntimeMethodBound {
+    /// Explicitly opts into semantic capture; omission retains the original request.
+    public let semanticCapture: RuntimeSemanticCaptureOptions?
+
     public static let runtimeMethod = RuntimeMethod.hierarchySnapshot
-    public init() {}
+    public init(semanticCapture: RuntimeSemanticCaptureOptions? = nil) {
+        self.semanticCapture = semanticCapture
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        semanticCapture = container.contains(.semanticCapture) ? try container.decode(RuntimeSemanticCaptureOptions.self, forKey: .semanticCapture) : nil
+    }
 }
 
 public struct RuntimePatchableAttributesParameters: RuntimeEmptyMethodParameters {

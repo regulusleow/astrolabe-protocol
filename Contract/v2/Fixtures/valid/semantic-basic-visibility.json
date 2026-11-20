@@ -1,0 +1,57 @@
+{
+  "windowID": "window:1",
+  "source": "ios.accessibility",
+  "availability": "complete",
+  "issues": [],
+  "visitedNodeCount": 2,
+  "wasTruncated": false,
+  "roots": [
+    {
+      "nodeID": "semantic:1",
+      "parentID": null,
+      "siblingIndex": 0,
+      "role": "text",
+      "runtimeType": {
+        "name": "AXElement",
+        "ancestors": []
+      },
+      "availableDetailCategories": [
+        "common.text"
+      ],
+      "children": [
+        {
+          "nodeID": "semantic:2",
+          "parentID": "semantic:1",
+          "siblingIndex": 0,
+          "role": "text",
+          "runtimeType": {
+            "name": "AXElement",
+            "ancestors": []
+          },
+          "availableDetailCategories": [
+            "common.text"
+          ],
+          "children": [],
+          "visibility": {
+            "hidden": false,
+            "hiddenByAncestor": false,
+            "opacity": 1,
+            "effectiveOpacity": 0.005,
+            "intersectsViewport": true,
+            "fullyClippedByAncestor": false,
+            "onscreen": false
+          }
+        }
+      ],
+      "visibility": {
+        "hidden": false,
+        "hiddenByAncestor": false,
+        "opacity": 1,
+        "effectiveOpacity": 1,
+        "intersectsViewport": true,
+        "fullyClippedByAncestor": false,
+        "onscreen": true
+      }
+    }
+  ]
+}

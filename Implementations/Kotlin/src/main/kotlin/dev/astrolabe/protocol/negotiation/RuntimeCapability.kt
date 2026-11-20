@@ -37,6 +37,8 @@ public value class RuntimeCapability(
         public val requestCancellation: RuntimeCapability = RuntimeCapability("requestCancellation")
         /** Runtime can report directed cross-tree node relations. */
         public val uiGraphRelations: RuntimeCapability = RuntimeCapability("uiGraphRelations")
+        /** Runtime supports explicit, frozen semantic inspection. */
+        public val semanticInspection: RuntimeCapability = RuntimeCapability("semanticInspection")
     }
 }
 

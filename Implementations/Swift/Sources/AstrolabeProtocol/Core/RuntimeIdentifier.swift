@@ -12,7 +12,7 @@ public struct RuntimeOpaqueIdentifier: Codable, Equatable, Hashable, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) throws {
-        guard !rawValue.isEmpty, rawValue.count <= 256 else {
+        guard !rawValue.isEmpty, rawValue.unicodeScalars.count <= 256 else {
             throw RuntimeContractValueError.invalidOpaqueIdentifier(rawValue)
         }
         self.rawValue = rawValue

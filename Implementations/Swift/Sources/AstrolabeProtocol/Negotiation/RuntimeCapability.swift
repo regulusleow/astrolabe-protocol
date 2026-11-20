@@ -33,6 +33,8 @@ public struct RuntimeCapability: Codable, Equatable, Hashable, Sendable {
     public static let attributePatching = RuntimeCapability(uncheckedRawValue: "attributePatching")
     public static let requestCancellation = RuntimeCapability(uncheckedRawValue: "requestCancellation")
     public static let uiGraphRelations = RuntimeCapability(uncheckedRawValue: "uiGraphRelations")
+    /// Runtime supports explicit, frozen semantic inspection.
+    public static let semanticInspection = RuntimeCapability(uncheckedRawValue: "semanticInspection")
 
     private init(uncheckedRawValue: String) {
         rawValue = uncheckedRawValue

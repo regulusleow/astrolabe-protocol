@@ -1,0 +1,121 @@
+package dev.astrolabe.protocol
+
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+
+class RuntimeSemanticInspectionTest {
+    private val codec = RuntimeMessageCodec()
+
+    @Test
+    fun `capture selectors allow omission but reject explicit null`() {
+        val capture = RuntimeHierarchyCaptureParameters.serializer()
+        val detail = RuntimeNodeDetailParameters.serializer()
+        assertEquals(null, codec.decodeValue("{}".toByteArray(), capture).semanticCapture)
+        assertEquals(RuntimeSemanticCaptureOptions(), codec.decodeValue("""{"semanticCapture":{}}""".toByteArray(), capture).semanticCapture)
+        assertEquals(null, codec.decodeValue("""{"nodeID":"native-1"}""".toByteArray(), detail).snapshotID)
+        for (body in listOf("""{"semanticCapture":null}""", """{"semanticCapture":{"windowID":null}}""")) {
+            assertFailsWith<RuntimeMessageException> { codec.decodeValue(body.toByteArray(), capture) }
+        }
+        assertFailsWith<RuntimeMessageException> {
+            codec.decodeValue("""{"nodeID":"native-1","snapshotID":null}""".toByteArray(), detail)
+        }
+    }
+
+    @Test
+    fun `legacy hierarchy decoder refuses selectors it cannot represent`() {
+        assertEquals(StructureKind.OBJECT, RuntimeHierarchySnapshotParameters.serializer().descriptor.kind)
+        for (body in listOf("""{"semanticCapture":null}""", """{"semanticCapture":{}}""")) {
+            assertFailsWith<RuntimeMessageException> {
+                codec.decodeValue(body.toByteArray(), RuntimeHierarchySnapshotParameters.serializer())
+            }
+        }
+    }
+
+    @Test
+    fun `absent selectors are omitted even when other defaults are encoded`() {
+        val json = Json { encodeDefaults = true }
+        assertEquals("{}", json.encodeToString(RuntimeHierarchyCaptureParameters.serializer(), RuntimeHierarchyCaptureParameters()))
+        assertEquals("""{"semanticCapture":{}}""", json.encodeToString(RuntimeHierarchyCaptureParameters.serializer(),
+            RuntimeHierarchyCaptureParameters(RuntimeSemanticCaptureOptions())))
+        assertEquals("""{"nodeID":"n"}""", json.encodeToString(RuntimeNodeDetailParameters.serializer(),
+            RuntimeNodeDetailParameters(RuntimeOpaqueIdentifier("n"))))
+    }
+
+    @Test
+    fun `opaque identifier length uses Unicode code points`() {
+        val boundary = "😀".repeat(256)
+        assertEquals(boundary, RuntimeOpaqueIdentifier(boundary).rawValue)
+        assertFailsWith<IllegalArgumentException> { RuntimeOpaqueIdentifier(boundary + "a") }
+        assertFailsWith<IllegalArgumentException> { RuntimeOpaqueIdentifier("x\u0301".repeat(180)) }
+    }
+
+    @Test
+    fun `runtime type names and ancestors use the same Unicode bound as semantic nodes`() {
+        val name = "😀".repeat(512)
+        assertEquals(name, RuntimeType(name, listOf(name)).name)
+        assertFailsWith<IllegalArgumentException> { RuntimeType("type", listOf(name + "a")) }
+    }
+
+    @Test
+    fun `semantic requests preserve explicit window and snapshot identity`() {
+        val request = """{"requestID":"11111111-1111-4111-8111-111111111111","protocolVersion":{"major":2,"minor":0},"method":"hierarchySnapshot","parameters":{"semanticCapture":{"windowID":"window:1"}}}""".toByteArray()
+        val envelope = codec.decodeRequest(request)
+        val parameters = codec.decodeRequestParameters(envelope, RuntimeHierarchyCaptureParameters.contract)
+        val encoded = codec.encodeRequest(envelope.requestID, RuntimeHierarchyCaptureParameters.contract, parameters)
+        assertEquals(codec.decodeDocument(request), codec.decodeDocument(encoded))
+        val detail = """{"nodeID":"semantic:1","snapshotID":"snapshot:1"}""".toByteArray()
+        val value = codec.decodeValue(detail, RuntimeNodeDetailParameters.serializer())
+        assertEquals(codec.decodeDocument(detail), codec.decodeDocument(codec.encodeValue(value, RuntimeNodeDetailParameters.serializer())))
+    }
+
+    @Test
+    fun `container tree accepts exact object budget without applying semantic element budget`() {
+        val nodes = (0 until 2000).map { index ->
+            RuntimeSemanticNode(RuntimeOpaqueIdentifier("container:$index"), null, index, "container",
+                RuntimeType("AXContainer", emptyList()), availableDetailCategories = emptyList(), children = emptyList())
+        }
+        val capture = RuntimeSemanticCapture(RuntimeOpaqueIdentifier("window:1"),
+            RuntimeNamespacedIdentifier("ios.accessibility"), RuntimeSemanticAvailability.complete, emptyList(), 2000, false, nodes)
+        assertEquals(2000, codec.decodeValue(codec.encodeValue(capture, RuntimeSemanticCapture.serializer()), RuntimeSemanticCapture.serializer()).roots.size)
+        assertFailsWith<IllegalArgumentException> {
+            capture.copy(visitedNodeCount = 1999)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            capture.copy(roots = listOf(nodes[0], nodes[0]))
+        }
+    }
+
+    @Test
+    fun `typed diagnostics preserve absence and reject malformed known extension`() {
+        val windows = listOf(RuntimeInspectionWindow(RuntimeOpaqueIdentifier("window:1"), runtimeType = RuntimeType("UIWindow", emptyList())))
+        val extension = runtimeInspectionTargetsExtension(windows)
+        assertEquals(windows, extension.inspectionTargets())
+        assertEquals(null, RuntimeExtensionMap(emptyMap()).inspectionTargets())
+        assertFailsWith<RuntimeMessageException> {
+            codec.decodeValue("""{"common.inspectionTargets":"opaque"}""".toByteArray(), RuntimeExtensionMap.serializer())
+        }
+        assertFailsWith<IllegalArgumentException> { runtimeInspectionTargetsExtension(windows + windows) }
+    }
+
+    @Test
+    fun `UTF-8 path and text budgets and color ranges are enforced`() {
+        assertFailsWith<IllegalArgumentException> {
+            RuntimeInspectionIssue(RuntimeNamespacedIdentifier("inspection.limit"), "界".repeat(342))
+        }
+        val identifier = RuntimeAttributeIdentifier("common.text.content")
+        assertFailsWith<IllegalArgumentException> {
+            RuntimeSemanticTextField("text", RuntimeAttribute(identifier, RuntimeAttributeValue.StringValue("界".repeat(5462))))
+        }
+        assertFailsWith<IllegalArgumentException> {
+            RuntimeSemanticTextField("color", RuntimeAttribute(identifier, RuntimeAttributeValue.Color(RuntimeColor("sRGB", 1.01, 0.0, 0.0, 1.0))))
+        }
+        assertFailsWith<IllegalArgumentException> {
+            RuntimeSemanticTextField("extra", RuntimeAttribute(identifier, RuntimeAttributeValue.ObjectValue(JsonObject(mapOf("text" to JsonPrimitive("x".repeat(16385)))))))
+        }
+    }
+}

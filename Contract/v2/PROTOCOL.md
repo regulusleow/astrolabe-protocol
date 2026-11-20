@@ -97,8 +97,8 @@ response to the in-flight request.
 | --- | --- | --- | --- |
 | `handshake` | Handshake parameters | Handshake result | Always available |
 | `applicationInfo` | Empty object | Application, target, environment | `applicationInfo` |
-| `hierarchySnapshot` | Empty object | Immutable hierarchy snapshot | `hierarchySnapshot` |
-| `nodeDetail` | Node ID | Detail sections | `nodeDetail` |
+| `hierarchySnapshot` | Optional semantic capture options | Immutable hierarchy snapshot | `hierarchySnapshot` |
+| `nodeDetail` | Node ID, optional Runtime snapshot ID | Detail sections | `nodeDetail` |
 | `patchableAttributes` | Empty object | Runtime patch catalog | `attributePatchDiscovery` |
 | `applyAttributePatch` | Node, attribute, value | Active patch | `attributePatching` |
 | `listAttributePatches` | Empty object | Active patches | `attributePatching` |
@@ -111,6 +111,8 @@ baselines, visual diff, semantic compression, and snapshot storage are not
 Runtime capabilities.
 
 ## 6. Identity and lifecycle
+
+Opaque wire identifiers contain 1 to 256 Unicode code points.
 
 - `target.identifier` identifies the inspected process instance. It is opaque
   and changes when the App process restarts.
@@ -202,6 +204,92 @@ ancestor, has effective opacity greater than `0.01`, intersects the viewport,
 and is not fully clipped by an ancestor.
 
 ### 8.3 UI graph relations
+
+### Typed semantic inspection
+
+`semanticInspection` is an additive capability on Wire V2, following the
+existing capability extension mechanism. It does not change handshake or
+require a protocol version upgrade. Only an explicit
+`hierarchySnapshot.parameters.semanticCapture` requests semantic inspection;
+omission retains the existing empty request. An empty options object requests
+the unique eligible ordinary window, while `windowID` selects one native window
+registry identity. Clients must check the handshake for `semanticInspection`
+before sending either a semantic capture request or a snapshot-bound detail
+request. If the capability is absent, report `capabilityUnavailable` locally.
+Runtimes implementing this contract must also reject unsupported semantic
+requests with `capabilityUnavailable`. Older Runtimes, including Android
+Runtime 2.3.0, may ignore the selectors and return ordinary hierarchy or live
+detail. The `semanticCapture`, `windowID`, and `snapshotID` request selectors
+may be omitted. Explicit JSON null is invalid for each of them.
+
+Kotlin clients can continue to send `RuntimeHierarchySnapshotParameters` for an
+ordinary capture. Use `RuntimeHierarchyCaptureParameters.contract` to encode or
+decode the optional semantic scope.
+
+The optional `semanticCapture` payload contains typed `windowID`, namespaced
+`source`, local `availability` (`complete`, `partial`, `unavailable`),
+`issues`, `visitedNodeCount`, `wasTruncated`, and ordered `roots`.
+It coexists with required render roots. Semantic nodes have capture-local
+opaque `nodeID`, required nullable `parentID`, zero-based `siblingIndex`,
+open `role`, actual `runtimeType`, optional public `accessibility` and
+screen/logical `frameInScreen`, optional `visibility`, `availableDetailCategories`, and AX `children`.
+When a Runtime proves a semantic-to-render association, `visibility` uses the same
+validated basic visibility fields and 0.01 opacity threshold as render nodes.
+It does not prove absence of sibling occlusion or pixel-level mask effects.
+AX existence or geometry matching alone cannot justify this association; omission
+remains unknown, and Hosts must not substitute default visible/opaque values.
+Missing optional facts mean unknown; they do not imply zero geometry, visible,
+opaque, or interactive. Existing render geometry, visibility, and interaction
+requirements remain unchanged. Local availability never adds a response status.
+
+Semantic tree IDs must be unique, each parent edge and sibling index must agree
+with the actual tree, root parents must be null, total represented nodes must
+not exceed `visitedNodeCount`, and the latter must be in 0...2000. Depth is
+zero-based 0...19. The collector's 500 semantic-element budget is distinct from
+the object/container tree budget; the DTO does not cap that tree at 500.
+The conformance validator applies the `semanticTree` rule for comparisons
+standard JSON Schema cannot express.
+
+Semantic `nodeDetail` requests carry the original Runtime `snapshotID`;
+omitting it retains live render-node detail behavior. The optional
+`semanticContext` payload freezes `snapshotID`, original non-negative finite
+`capturedAtUnixTime`, namespaced `source`, `availability`, `issues`,
+`wasTruncated`, and `textCandidates`. Each candidate keeps its namespaced
+original-attachment or combined-cache `source`, original `path`, typed
+`fields`, and `issues`; each field has its own `path` and an existing
+`RuntimeAttribute`. Candidate values retain their typed discriminator,
+including scaledLogical font sizes and finite [0,1] RGBA colors. Combined cache
+facts do not establish the original Text's font. Snapshot/node membership,
+expiry, and foreground checks belong to the Runtime, with no live fallback.
+
+All issue codes and sources are namespaced. Field paths contain no control
+characters or business values, are non-empty, and use at most 1024 UTF-8 bytes;
+semantic strings use at most 16384 UTF-8 bytes. Candidate fields are bounded at
+1500 per candidate and 10000 per detail context; issue/category/trait lists and
+per-node child lists are bounded at 2000. These DTO bounds supplement the
+collector's traversal and cumulative 4 MiB capture/store budgets, which the
+Runtime must enforce. JSON Schema string lengths are code-point bounds;
+`semanticTree` and `semanticValues` conformance rules also enforce UTF-8
+budgets and cumulative detail field counts.
+
+Target selection errors use `inspection.targetAmbiguous`,
+`inspection.targetUnavailable`, `inspection.applicationInactive`,
+`inspection.contextChanged`, `inspection.snapshotUnavailable`, or
+`inspection.captureTooLarge`; malformed parameters or identity mismatch use
+`invalidParameters`. Errors must not include UI or business values. The
+defined `error.extensions["common.inspectionTargets"]` diagnostic is an array
+of up to 64 typed windows with unique `windowID`, optional `sceneID`, actual
+`runtimeType`, optional local/logical `bounds`, finite optional `level`,
+and optional namespaced `exclusionReason`. The `inspectionTargets` conformance
+rule checks ID uniqueness in standalone extension maps and failure responses.
+Swift/Kotlin provide typed read
+and construction accessors and validate this known extension during decoding.
+
+When the exact AX object is a UIView captured in the same render roots, the
+Runtime may emit `ios.accessibility.representsView` from semantic ID to View ID
+using existing typed relations. Text, geometry, and type matching cannot infer
+this identity relation. Hosts retain semantic provenance and AX containment
+instead of synthesizing render facts or merging observations.
 
 The `uiGraphRelations` capability advertises that hierarchy snapshots may
 contain an optional `relations` member. Each directed relation contains an open

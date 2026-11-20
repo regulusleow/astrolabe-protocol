@@ -1,0 +1,36 @@
+{
+  "windowID": "window:1",
+  "source": "ios.accessibility",
+  "availability": "partial",
+  "issues": [
+    {
+      "code": "inspection.unsupportedLayout"
+    }
+  ],
+  "visitedNodeCount": 1,
+  "wasTruncated": false,
+  "roots": [
+    {
+      "nodeID": "semantic:1",
+      "parentID": null,
+      "siblingIndex": 0,
+      "role": "text",
+      "runtimeType": {
+        "name": "AXElement",
+        "ancestors": []
+      },
+      "availableDetailCategories": [
+        "common.text"
+      ],
+      "children": [],
+      "frameInScreen": {
+        "x": 0,
+        "y": 0,
+        "width": 1,
+        "height": 1,
+        "coordinateSpace": "local",
+        "unit": "logical"
+      }
+    }
+  ]
+}
